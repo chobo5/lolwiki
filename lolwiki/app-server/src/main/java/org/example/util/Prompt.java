@@ -6,7 +6,7 @@ import java.util.Stack;
 
 //클라이언트에서 보낸 입력을 받는다.
 //클라이언트에게 출력한다.
-public class Prompt {
+public class Prompt implements AutoCloseable{
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -44,5 +44,11 @@ public class Prompt {
             print(path);
         }
         print(">");
+    }
+
+    @Override
+    public void close() throws Exception {
+        printWriter.close();
+        stringWriter.close();
     }
 }
