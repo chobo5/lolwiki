@@ -1,6 +1,7 @@
 package org.example.util;
 
 import java.io.*;
+import java.sql.Date;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -17,6 +18,24 @@ public class Prompt implements AutoCloseable{
     public Prompt(DataInputStream in, DataOutputStream out) {
         this.in = in;
         this.out = out;
+    }
+
+    public String input(String str, Object... args) {
+        try {
+            printf(str, args);
+            end();
+            return in.readUTF();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int intInput(String str, Object ...args) {
+        return Integer.parseInt(this.input(str, args));
+    }
+
+    public Date dateInput(String str, Object ...args) {
+        return Date.valueOf(this.input(str, args));
     }
 
     public void print(String str) {
@@ -39,13 +58,21 @@ public class Prompt implements AutoCloseable{
         breadcrumb.pop();
     }
 
-    public void printPath() {
-        for (String path : breadcrumb) {
-            print(path);
-        }
-        print(">");
+    public String getFullPath() {
+        return String.join("/", breadcrumb.toArray(new String[0]));
     }
 
+    public void end() throws Exception {
+        //PrintWriter를 통해 출력한 내용은 StringWriter에 쌓여있다.
+        //StringWriter에 쌓여있는 문자열을 꺼낸다.
+        StringBuffer buf = stringWriter.getBuffer();
+        String content = buf.toString();
+
+        //StringWriter에 쌓여있는 문자열을 꺼낸후 버퍼를 초기화시킨다.
+        buf.setLength(0);
+        // 버퍼에서 꺼낸 문자열을 클라이언트로 전송한다.
+        out.writeUTF(content);
+    }
     @Override
     public void close() throws Exception {
         printWriter.close();
