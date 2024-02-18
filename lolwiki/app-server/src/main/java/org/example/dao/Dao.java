@@ -9,12 +9,13 @@ public interface Dao<T> {
 
     T findBy(int id);
 
-    T findBy(String keyword);
+    List<T> findBy(String keyword);
 
     int delete(int id);
 
     int delete(String keyword);
 
     int update(T t);
+
 
 }
