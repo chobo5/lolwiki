@@ -132,6 +132,8 @@ ALTER TABLE `league`
 	`league_no` -- 리그번호
 	);
 
+ALTER TABLE league CHANGE foundation_date foundation_year VARCHAR(20);
+
 ALTER TABLE league CHANGE full_name full_name VARCHAR(50);
 
 ALTER TABLE league CHANGE foundation_date foundation_date VARCHAR(20);
