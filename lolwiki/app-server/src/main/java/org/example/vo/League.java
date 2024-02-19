@@ -4,14 +4,15 @@ public class League {
     private int leagueNo;
     private String name;
     private String fullName;
-    private String foundationDate;
+    private String foundationYear;
     private String region;
-    private String main_agent;
+    private String mainAgent;
     private String slogan;
+    private String partner;
     private String stadium;
-    private String recent_champ;
-    private String most_champ;
-    private String most_player;
+    private String recentChamp;
+    private String mostChamp;
+    private String mostPlayer;
 
     public int getLeagueNo() {
         return leagueNo;
@@ -37,12 +38,12 @@ public class League {
         this.fullName = fullName;
     }
 
-    public String getFoundationDate() {
-        return foundationDate;
+    public String getFoundationYear() {
+        return foundationYear;
     }
 
-    public void setFoundationDate(String foundationDate) {
-        this.foundationDate = foundationDate;
+    public void setFoundationYear(String foundationYear) {
+        this.foundationYear = foundationYear;
     }
 
     public String getRegion() {
@@ -53,12 +54,12 @@ public class League {
         this.region = region;
     }
 
-    public String getMain_agent() {
-        return main_agent;
+    public String getMainAgent() {
+        return mainAgent;
     }
 
-    public void setMain_agent(String main_agent) {
-        this.main_agent = main_agent;
+    public void setMainAgent(String mainAgent) {
+        this.mainAgent = mainAgent;
     }
 
     public String getSlogan() {
@@ -69,6 +70,14 @@ public class League {
         this.slogan = slogan;
     }
 
+    public String getPartner() {
+        return partner;
+    }
+
+    public void setPartner(String partner) {
+        this.partner = partner;
+    }
+
     public String getStadium() {
         return stadium;
     }
@@ -77,28 +86,28 @@ public class League {
         this.stadium = stadium;
     }
 
-    public String getRecent_champ() {
-        return recent_champ;
+    public String getRecentChamp() {
+        return recentChamp;
     }
 
-    public void setRecent_champ(String recent_champ) {
-        this.recent_champ = recent_champ;
+    public void setRecentChamp(String recentChamp) {
+        this.recentChamp = recentChamp;
     }
 
-    public String getMost_champ() {
-        return most_champ;
+    public String getMostChamp() {
+        return mostChamp;
     }
 
-    public void setMost_champ(String most_champ) {
-        this.most_champ = most_champ;
+    public void setMostChamp(String mostChamp) {
+        this.mostChamp = mostChamp;
     }
 
-    public String getMost_player() {
-        return most_player;
+    public String getMostPlayer() {
+        return mostPlayer;
     }
 
-    public void setMost_player(String most_player) {
-        this.most_player = most_player;
+    public void setMostPlayer(String mostPlayer) {
+        this.mostPlayer = mostPlayer;
     }
 
     @Override
@@ -107,14 +116,14 @@ public class League {
                 "leagueNo=" + leagueNo +
                 ", name='" + name + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", foundationDate='" + foundationDate + '\'' +
+                ", foundationDate='" + foundationYear + '\'' +
                 ", region='" + region + '\'' +
-                ", main_agent='" + main_agent + '\'' +
+                ", main_agent='" + mainAgent + '\'' +
                 ", slogan='" + slogan + '\'' +
                 ", stadium='" + stadium + '\'' +
-                ", recent_champ='" + recent_champ + '\'' +
-                ", most_champ='" + most_champ + '\'' +
-                ", most_player='" + most_player + '\'' +
+                ", recent_champ='" + recentChamp + '\'' +
+                ", most_champ='" + mostChamp + '\'' +
+                ", most_player='" + mostPlayer + '\'' +
                 '}';
     }
 }

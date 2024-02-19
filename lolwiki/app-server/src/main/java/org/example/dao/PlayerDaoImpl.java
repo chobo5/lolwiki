@@ -27,8 +27,7 @@ public class PlayerDaoImpl implements Dao<Player> {
                     " debut," +
                     " position," +
                     " kor_server_id," +
-                    " roaster_no)\n" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, player.getKorName());
             pstmt.setString(2, player.getEngName());
@@ -37,7 +36,6 @@ public class PlayerDaoImpl implements Dao<Player> {
             pstmt.setDate(5, player.getDebut());
             pstmt.setString(6, player.getPosition());
             pstmt.setString(7, player.getKorServerId());
-            pstmt.setInt(8, player.getRoasterNo());
             pstmt.executeUpdate();
 
         } catch (Exception e) {
@@ -53,11 +51,10 @@ public class PlayerDaoImpl implements Dao<Player> {
                     " p.kor_name," +
                     " p.kor_server_id," +
                     " p.position" +
-                    " from player p, roaster r, season s, club c" +
-                    " where p.roaster_no = r.roaster_no" +
-                    " and r.season_no = 2024" +
-                    " and s.season_no = 2024" +
-                    " and s.club_no = c.club_no" +
+                    " from player p, roaster_player rp, roaster r, club c" +
+                    " where p.player_no = rp.player_no" +
+                    " and rp.roaster_no = r.roaster_no" +
+                    " and r.club_no = c.club_no" +
                     " order by c.name desc";
             PreparedStatement pstmt = con.prepareStatement(sql);
 
@@ -88,15 +85,19 @@ public class PlayerDaoImpl implements Dao<Player> {
     @Override
     public List<Player> findBy(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "select game_id," +
-                    " kor_name," +
-                    " eng_name," +
-                    " birth," +
-                    " nationality," +
-                    " debut," +
-                    " position," +
-                    " kor_server_id" +
-                    " from player" +
+            String sql = "select c.name" +
+                    "p.game_id," +
+                    " p.kor_name," +
+                    " p.eng_name," +
+                    " p.birth," +
+                    " p.nationality," +
+                    " p.debut," +
+                    " p.position," +
+                    " p.kor_server_id" +
+                    " from player p, roaster_player rp, roaster r, club c" +
+                    " where p.player_no = rp.player_no" +
+                    " and rp.roaster_no = r.roaster_no" +
+                    " and r.club_no = c.club_no" +
                     " where game_id like '%?%'";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, keyword);
@@ -104,6 +105,7 @@ public class PlayerDaoImpl implements Dao<Player> {
             List<Player> players = new ArrayList<>();
             while (rs.next()) {
                 Player player = new Player();
+                player.setTeam(rs.getString("name"));
                 player.setGameId(rs.getString("game_id"));
                 player.setKorName(rs.getString("kor_name"));
                 player.setEngName(rs.getString("eng_name"));

@@ -1,15 +1,13 @@
-
 -- 구단
 CREATE TABLE `club` (
-	`club_no`        INT         NOT NULL COMMENT '구단번호', -- 구단번호
-	`foundation`     DATE        NOT NULL COMMENT '창단', -- 창단
-	`belong_to`      VARCHAR(20) NOT NULL COMMENT '소속리그', -- 소속리그
-	`name`           VARCHAR(20) NOT NULL COMMENT '팀명', -- 팀명
-	`parent_company` VARCHAR(20) NULL     COMMENT '모기업', -- 모기업
-	`ceo`            VARCHAR(20) NULL     COMMENT 'CEO', -- CEO
-	`leader`         VARCHAR(20) NULL     COMMENT '단장', -- 단장
-	`color`          VARCHAR(20) NULL     COMMENT '팀컬러', -- 팀컬러
-	`league_no`      INT         NOT NULL COMMENT '리그번호' -- 리그번호
+	`club_no`    INT         NOT NULL COMMENT '구단번호', -- 구단번호
+	`foundation` DATE        NOT NULL COMMENT '창단', -- 창단
+	`belong`     VARCHAR(20) NOT NULL COMMENT '소속리그', -- 소속리그
+	`full_name`  VARCHAR(50) NOT NULL COMMENT '팀명', -- 팀명
+	`name`       VARCHAR(20) NULL     COMMENT '약칭', -- 약칭
+	`leader`     VARCHAR(20) NULL     COMMENT '단장', -- 단장
+	`color`      VARCHAR(20) NULL     COMMENT '팀컬러', -- 팀컬러
+	`league_no`  INT         NOT NULL COMMENT '리그번호' -- 리그번호
 )
 COMMENT '구단';
 
@@ -23,21 +21,19 @@ ALTER TABLE `club`
 ALTER TABLE `club`
 	MODIFY COLUMN `club_no` INT NOT NULL AUTO_INCREMENT COMMENT '구단번호';
 
--- 경기 기록
-CREATE TABLE `record` (
-	`player_no`     INT NOT NULL COMMENT '선수번호', -- 선수번호
-	`worlds`        INT NOT NULL COMMENT '월즈', -- 월즈
-	`msi`           INT NOT NULL COMMENT 'msi', -- msi
-	`league_spring` INT NOT NULL COMMENT '스프링', -- 스프링
-	`league_summer` INT NOT NULL COMMENT '써머' -- 써머
+-- 대회우승
+CREATE TABLE `roaster_contest` (
+	`contest_no` INT NOT NULL COMMENT '대회번호', -- 대회번호
+	`roaster_no` INT NOT NULL COMMENT '로스터번호' -- 로스터번호
 )
-COMMENT '경기 기록';
+COMMENT '대회우승';
 
--- 경기 기록
-ALTER TABLE `record`
-	ADD CONSTRAINT `PK_record` -- 경기 기록 기본키
+-- 대회우승
+ALTER TABLE `roaster_contest`
+	ADD CONSTRAINT `PK_roaster_contest` -- 대회우승 기본키
 	PRIMARY KEY (
-	`player_no` -- 선수번호
+	`contest_no`, -- 대회번호
+	`roaster_no`  -- 로스터번호
 	);
 
 -- 선수
@@ -50,8 +46,7 @@ CREATE TABLE `player` (
 	`nationality`   VARCHAR(10) NOT NULL COMMENT '국적', -- 국적
 	`debut`         DATE        NOT NULL COMMENT '데뷔', -- 데뷔
 	`position`      VARCHAR(20) NOT NULL COMMENT '포지션', -- 포지션
-	`kor_server_id` VARCHAR(20) NULL     COMMENT '한국서버아이디', -- 한국서버아이디
-	`roaster_no`    INT         NULL     COMMENT '로스터 번호' -- 로스터 번호
+	`kor_server_id` VARCHAR(50) NULL     COMMENT '한국서버아이디' -- 한국서버아이디
 )
 COMMENT '선수';
 
@@ -65,33 +60,25 @@ ALTER TABLE `player`
 ALTER TABLE `player`
 	MODIFY COLUMN `player_no` INT NOT NULL AUTO_INCREMENT COMMENT '선수번호';
 
--- 솔로 랭크
-CREATE TABLE `solo_rank` (
-	`season`    INT         NOT NULL COMMENT 'season', -- season
-	`player_no` INT         NOT NULL COMMENT '선수번호', -- 선수번호
-	`game_id`   VARCHAR(20) NOT NULL COMMENT '계정', -- 계정
-	`best`      VARCHAR(20) NULL     COMMENT '최고', -- 최고
-	`final`     VARCHAR(20) NULL     COMMENT '최종' -- 최종
-)
-COMMENT '솔로 랭크';
-
--- 솔로 랭크
-ALTER TABLE `solo_rank`
-	ADD CONSTRAINT `PK_solo_rank` -- 솔로 랭크 기본키
-	PRIMARY KEY (
-	`season` -- season
-	);
-
 -- SNS
 CREATE TABLE `sns` (
-	`instagram` VARCHAR(20) NULL COMMENT '인스타그램', -- 인스타그램
-	`facebook`  VARCHAR(20) NULL COMMENT '페이스북', -- 페이스북
-	`x`         VARCHAR(20) NULL COMMENT '엑스', -- 엑스
-	`player_no` INT         NULL COMMENT '선수번호', -- 선수번호
-	`club_no`   INT         NULL COMMENT '구단번호', -- 구단번호
-	`league_no` INT         NULL COMMENT '리그번호' -- 리그번호
+	`sns_no` VARCHAR(20) NOT NULL COMMENT 'SNS번호', -- SNS번호
+	`name`   VARCHAR(20) NULL     COMMENT 'SNS이름' -- SNS이름
 )
 COMMENT 'SNS';
+
+-- SNS
+ALTER TABLE `sns`
+	ADD CONSTRAINT `PK_sns` -- SNS 기본키
+	PRIMARY KEY (
+	`sns_no` -- SNS번호
+	);
+
+-- SNS 유니크 인덱스
+CREATE UNIQUE INDEX `UIX_sns`
+	ON `sns` ( -- SNS
+		`name` ASC -- SNS이름
+	);
 
 -- 별명
 CREATE TABLE `nickname` (
@@ -111,9 +98,9 @@ ALTER TABLE `nickname`
 -- 리그
 CREATE TABLE `league` (
 	`league_no`       INT         NOT NULL COMMENT '리그번호', -- 리그번호
+	`full_name`       VARCHAR(50) NOT NULL COMMENT '정식명칭', -- 정식명칭
 	`name`            VARCHAR(20) NULL     COMMENT '약칭', -- 약칭
-	`full_name`       VARCHAR(20) NOT NULL COMMENT '정식명칭', -- 정식명칭
-	`foundation_date` DATE        NOT NULL COMMENT '출범연도', -- 출범연도
+	`foundation_date` VARCHAR(20) NOT NULL COMMENT '출범연도', -- 출범연도
 	`region`          VARCHAR(20) NOT NULL COMMENT '지역', -- 지역
 	`main_agent`      VARCHAR(20) NULL     COMMENT '운영주체', -- 운영주체
 	`slogan`          VARCHAR(50) NULL     COMMENT '표어', -- 표어
@@ -132,22 +119,18 @@ ALTER TABLE `league`
 	`league_no` -- 리그번호
 	);
 
-ALTER TABLE league CHANGE foundation_date foundation_year VARCHAR(20);
-
-ALTER TABLE league CHANGE full_name full_name VARCHAR(50);
-
-ALTER TABLE league CHANGE foundation_date foundation_date VARCHAR(20);
-
 ALTER TABLE `league`
 	MODIFY COLUMN `league_no` INT NOT NULL AUTO_INCREMENT COMMENT '리그번호';
+
+ALTER TABLE league CHANGE foundation_date foundation_year VARCHAR(20);
 
 -- 로스터
 CREATE TABLE `roaster` (
 	`roaster_no` INT         NOT NULL COMMENT '로스터번호', -- 로스터번호
-	`season_no`  INT         NOT NULL COMMENT '시즌번호', -- 시즌번호
+	`club_no`    INT         NULL     COMMENT '구단번호', -- 구단번호
+	`season`     INT         NULL     COMMENT '시즌', -- 시즌
 	`director`   VARCHAR(20) NULL     COMMENT '감독', -- 감독
-	`coach`      VARCHAR(20) NULL     COMMENT '코치', -- 코치
-	`captain`    VARCHAR(20) NULL     COMMENT '주장' -- 주장
+	`coach`      VARCHAR(50) NULL     COMMENT '코치' -- 코치
 )
 COMMENT '로스터';
 
@@ -158,24 +141,15 @@ ALTER TABLE `roaster`
 	`roaster_no` -- 로스터번호
 	);
 
+-- 로스터 유니크 인덱스
+CREATE UNIQUE INDEX `UIX_roaster`
+	ON `roaster` ( -- 로스터
+		`club_no` ASC, -- 구단번호
+		`season` ASC   -- 시즌
+	);
+
 ALTER TABLE `roaster`
 	MODIFY COLUMN `roaster_no` INT NOT NULL AUTO_INCREMENT COMMENT '로스터번호';
-
-ALTER TABLE roaster CHANGE coach coach VARCHAR(50);
--- 시즌별 기록
-CREATE TABLE `record_of_season` (
-	`season`    INT NOT NULL COMMENT '시즌', -- 시즌
-	`player_no` INT NOT NULL COMMENT '선수번호' -- 선수번호
-)
-COMMENT '시즌별 기록';
-
--- 시즌별 기록
-ALTER TABLE `record_of_season`
-	ADD CONSTRAINT `PK_record_of_season` -- 시즌별 기록 기본키
-	PRIMARY KEY (
-	`season`,    -- 시즌
-	`player_no`  -- 선수번호
-	);
 
 -- 선수사진
 CREATE TABLE `player_pic` (
@@ -184,33 +158,90 @@ CREATE TABLE `player_pic` (
 )
 COMMENT '선수사진';
 
--- 서명사진
-CREATE TABLE `sign` (
-	`player_no` INT          NULL COMMENT '선수번호', -- 선수번호
-	`path`      VARCHAR(250) NULL COMMENT '경로' -- 경로
-)
-COMMENT '서명사진';
-
--- 시즌
-CREATE TABLE `season` (
-	`season_no` INT NOT NULL COMMENT '시즌번호', -- 시즌번호
-	`club_no`   INT NULL     COMMENT '구단번호' -- 구단번호
-)
-COMMENT '시즌';
-
--- 시즌
-ALTER TABLE `season`
-	ADD CONSTRAINT `PK_season` -- 시즌 기본키
-	PRIMARY KEY (
-	`season_no` -- 시즌번호
-	);
-
 -- 스폰서
 CREATE TABLE `sponsor` (
-	`name`      VARCHAR(50) NOT NULL COMMENT '스폰서명', -- 스폰서명
-	`league_no` INT         NOT NULL COMMENT '리그번호' -- 리그번호
+	`league_no` INT         NOT NULL COMMENT '리그번호', -- 리그번호
+	`name`      VARCHAR(50) NOT NULL COMMENT '스폰서명' -- 스폰서명
 )
 COMMENT '스폰서';
+
+-- 선수SNS
+CREATE TABLE `player_sns` (
+	`player_no` INT          NOT NULL COMMENT '선수번호', -- 선수번호
+	`sns_no`    VARCHAR(20)  NOT NULL COMMENT 'SNS번호', -- SNS번호
+	`url`       VARCHAR(100) NULL     COMMENT 'URL' -- URL
+)
+COMMENT '선수SNS';
+
+-- 선수SNS
+ALTER TABLE `player_sns`
+	ADD CONSTRAINT `PK_player_sns` -- 선수SNS 기본키
+	PRIMARY KEY (
+	`player_no`, -- 선수번호
+	`sns_no`     -- SNS번호
+	);
+
+-- 구단SNS
+CREATE TABLE `club_sns` (
+	`club_no` INT          NOT NULL COMMENT '구단번호', -- 구단번호
+	`sns_no`  VARCHAR(20)  NOT NULL COMMENT 'SNS번호', -- SNS번호
+	`url`     VARCHAR(100) NULL     COMMENT 'URL' -- URL
+)
+COMMENT '구단SNS';
+
+-- 구단SNS
+ALTER TABLE `club_sns`
+	ADD CONSTRAINT `PK_club_sns` -- 구단SNS 기본키
+	PRIMARY KEY (
+	`club_no`, -- 구단번호
+	`sns_no`   -- SNS번호
+	);
+
+-- 리그SNS
+CREATE TABLE `league_sns` (
+	`league_no` INT          NOT NULL COMMENT '리그번호', -- 리그번호
+	`sns_no`    VARCHAR(20)  NOT NULL COMMENT 'SNS번호', -- SNS번호
+	`url`       VARCHAR(100) NULL     COMMENT 'URL' -- URL
+)
+COMMENT '리그SNS';
+
+-- 리그SNS
+ALTER TABLE `league_sns`
+	ADD CONSTRAINT `PK_league_sns` -- 리그SNS 기본키
+	PRIMARY KEY (
+	`league_no`, -- 리그번호
+	`sns_no`     -- SNS번호
+	);
+
+-- 로스터소속선수
+CREATE TABLE `roaster_player` (
+	`roaster_no` INT     NOT NULL COMMENT '로스터번호', -- 로스터번호
+	`player_no`  INT     NOT NULL COMMENT '선수번호', -- 선수번호
+	`is_captain` BOOLEAN NOT NULL COMMENT '주장여부' -- 주장여부
+)
+COMMENT '로스터소속선수';
+
+-- 로스터소속선수
+ALTER TABLE `roaster_player`
+	ADD CONSTRAINT `PK_roaster_player` -- 로스터소속선수 기본키
+	PRIMARY KEY (
+	`roaster_no`, -- 로스터번호
+	`player_no`   -- 선수번호
+	);
+
+-- 대회
+CREATE TABLE `contest` (
+	`contest_no` INT         NOT NULL COMMENT '대회번호', -- 대회번호
+	`name`       VARCHAR(50) NULL     COMMENT '대회명' -- 대회명
+)
+COMMENT '대회';
+
+-- 대회
+ALTER TABLE `contest`
+	ADD CONSTRAINT `PK_contest` -- 대회 기본키
+	PRIMARY KEY (
+	`contest_no` -- 대회번호
+	);
 
 -- 구단
 ALTER TABLE `club`
@@ -222,65 +253,24 @@ ALTER TABLE `club`
 	`league_no` -- 리그번호
 	);
 
--- 경기 기록
-ALTER TABLE `record`
-	ADD CONSTRAINT `FK_player_TO_record` -- 선수 -> 경기 기록
+-- 대회우승
+ALTER TABLE `roaster_contest`
+	ADD CONSTRAINT `FK_contest_TO_roaster_contest` -- 대회 -> 대회우승
 	FOREIGN KEY (
-	`player_no` -- 선수번호
+	`contest_no` -- 대회번호
 	)
-	REFERENCES `player` ( -- 선수
-	`player_no` -- 선수번호
+	REFERENCES `contest` ( -- 대회
+	`contest_no` -- 대회번호
 	);
 
--- 선수
-ALTER TABLE player CHANGE kor_server_id kor_server_id VARCHAR(50);
-ALTER TABLE `player`
-	ADD CONSTRAINT `FK_roaster_TO_player` -- 로스터 -> 선수
+-- 대회우승
+ALTER TABLE `roaster_contest`
+	ADD CONSTRAINT `FK_roaster_TO_roaster_contest` -- 로스터 -> 대회우승
 	FOREIGN KEY (
-	`roaster_no` -- 로스터 번호
+	`roaster_no` -- 로스터번호
 	)
 	REFERENCES `roaster` ( -- 로스터
 	`roaster_no` -- 로스터번호
-	);
-
--- 솔로 랭크
-ALTER TABLE `solo_rank`
-	ADD CONSTRAINT `FK_player_TO_solo_rank` -- 선수 -> 솔로 랭크
-	FOREIGN KEY (
-	`player_no` -- 선수번호
-	)
-	REFERENCES `player` ( -- 선수
-	`player_no` -- 선수번호
-	);
-
--- SNS
-ALTER TABLE `sns`
-	ADD CONSTRAINT `FK_player_TO_sns` -- 선수 -> SNS
-	FOREIGN KEY (
-	`player_no` -- 선수번호
-	)
-	REFERENCES `player` ( -- 선수
-	`player_no` -- 선수번호
-	);
-
--- SNS
-ALTER TABLE `sns`
-	ADD CONSTRAINT `FK_club_TO_sns` -- 구단 -> SNS
-	FOREIGN KEY (
-	`club_no` -- 구단번호
-	)
-	REFERENCES `club` ( -- 구단
-	`club_no` -- 구단번호
-	);
-
--- SNS
-ALTER TABLE `sns`
-	ADD CONSTRAINT `FK_league_TO_sns` -- 리그 -> SNS
-	FOREIGN KEY (
-	`league_no` -- 리그번호
-	)
-	REFERENCES `league` ( -- 리그
-	`league_no` -- 리그번호
 	);
 
 -- 별명
@@ -295,22 +285,12 @@ ALTER TABLE `nickname`
 
 -- 로스터
 ALTER TABLE `roaster`
-	ADD CONSTRAINT `FK_season_TO_roaster` -- 시즌 -> 로스터
+	ADD CONSTRAINT `FK_club_TO_roaster` -- 구단 -> 로스터
 	FOREIGN KEY (
-	`season_no` -- 시즌번호
+	`club_no` -- 구단번호
 	)
-	REFERENCES `season` ( -- 시즌
-	`season_no` -- 시즌번호
-	);
-
--- 시즌별 기록
-ALTER TABLE `record_of_season`
-	ADD CONSTRAINT `FK_player_TO_record_of_season` -- 선수 -> 시즌별 기록
-	FOREIGN KEY (
-	`player_no` -- 선수번호
-	)
-	REFERENCES `player` ( -- 선수
-	`player_no` -- 선수번호
+	REFERENCES `club` ( -- 구단
+	`club_no` -- 구단번호
 	);
 
 -- 선수사진
@@ -323,26 +303,6 @@ ALTER TABLE `player_pic`
 	`player_no` -- 선수번호
 	);
 
--- 서명사진
-ALTER TABLE `sign`
-	ADD CONSTRAINT `FK_player_TO_sign` -- 선수 -> 서명사진
-	FOREIGN KEY (
-	`player_no` -- 선수번호
-	)
-	REFERENCES `player` ( -- 선수
-	`player_no` -- 선수번호
-	);
-
--- 시즌
-ALTER TABLE `season`
-	ADD CONSTRAINT `FK_club_TO_season` -- 구단 -> 시즌
-	FOREIGN KEY (
-	`club_no` -- 구단번호
-	)
-	REFERENCES `club` ( -- 구단
-	`club_no` -- 구단번호
-	);
-
 -- 스폰서
 ALTER TABLE `sponsor`
 	ADD CONSTRAINT `FK_league_TO_sponsor` -- 리그 -> 스폰서
@@ -351,4 +311,84 @@ ALTER TABLE `sponsor`
 	)
 	REFERENCES `league` ( -- 리그
 	`league_no` -- 리그번호
+	);
+
+-- 선수SNS
+ALTER TABLE `player_sns`
+	ADD CONSTRAINT `FK_player_TO_player_sns` -- 선수 -> 선수SNS
+	FOREIGN KEY (
+	`player_no` -- 선수번호
+	)
+	REFERENCES `player` ( -- 선수
+	`player_no` -- 선수번호
+	);
+
+-- 선수SNS
+ALTER TABLE `player_sns`
+	ADD CONSTRAINT `FK_sns_TO_player_sns` -- SNS -> 선수SNS
+	FOREIGN KEY (
+	`sns_no` -- SNS번호
+	)
+	REFERENCES `sns` ( -- SNS
+	`sns_no` -- SNS번호
+	);
+
+-- 구단SNS
+ALTER TABLE `club_sns`
+	ADD CONSTRAINT `FK_club_TO_club_sns` -- 구단 -> 구단SNS
+	FOREIGN KEY (
+	`club_no` -- 구단번호
+	)
+	REFERENCES `club` ( -- 구단
+	`club_no` -- 구단번호
+	);
+
+-- 구단SNS
+ALTER TABLE `club_sns`
+	ADD CONSTRAINT `FK_sns_TO_club_sns` -- SNS -> 구단SNS
+	FOREIGN KEY (
+	`sns_no` -- SNS번호
+	)
+	REFERENCES `sns` ( -- SNS
+	`sns_no` -- SNS번호
+	);
+
+-- 리그SNS
+ALTER TABLE `league_sns`
+	ADD CONSTRAINT `FK_sns_TO_league_sns` -- SNS -> 리그SNS
+	FOREIGN KEY (
+	`sns_no` -- SNS번호
+	)
+	REFERENCES `sns` ( -- SNS
+	`sns_no` -- SNS번호
+	);
+
+-- 리그SNS
+ALTER TABLE `league_sns`
+	ADD CONSTRAINT `FK_league_TO_league_sns` -- 리그 -> 리그SNS
+	FOREIGN KEY (
+	`league_no` -- 리그번호
+	)
+	REFERENCES `league` ( -- 리그
+	`league_no` -- 리그번호
+	);
+
+-- 로스터소속선수
+ALTER TABLE `roaster_player`
+	ADD CONSTRAINT `FK_roaster_TO_roaster_player` -- 로스터 -> 로스터소속선수
+	FOREIGN KEY (
+	`roaster_no` -- 로스터번호
+	)
+	REFERENCES `roaster` ( -- 로스터
+	`roaster_no` -- 로스터번호
+	);
+
+-- 로스터소속선수
+ALTER TABLE `roaster_player`
+	ADD CONSTRAINT `FK_player_TO_roaster_player` -- 선수 -> 로스터소속선수
+	FOREIGN KEY (
+	`player_no` -- 선수번호
+	)
+	REFERENCES `player` ( -- 선수
+	`player_no` -- 선수번호
 	);

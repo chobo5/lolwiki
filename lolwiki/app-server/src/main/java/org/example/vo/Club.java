@@ -1,29 +1,40 @@
 package org.example.vo;
 
+import java.sql.Date;
+
 public class Club {
-    private String foundation;
-    private String belongTo;
+    private String league;
+    private Date foundation;
+    private String fullName;
     private String name;
     private String parentCompany;
     private String ceo;
     private String leader;
     private String color;
-    private String league_no;
+    private String leagueNo;
 
-    public String getFoundation() {
+    public String getLeague() {
+        return league;
+    }
+
+    public void setLeague(String league) {
+        this.league = league;
+    }
+
+    public Date getFoundation() {
         return foundation;
     }
 
-    public void setFoundation(String foundation) {
+    public void setFoundation(Date foundation) {
         this.foundation = foundation;
     }
 
-    public String getBelongTo() {
-        return belongTo;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setBelongTo(String belongTo) {
-        this.belongTo = belongTo;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getName() {
@@ -66,25 +77,12 @@ public class Club {
         this.color = color;
     }
 
-    public String getLeague_no() {
-        return league_no;
+    public String getLeagueNo() {
+        return leagueNo;
     }
 
-    public void setLeague_no(String league_no) {
-        this.league_no = league_no;
+    public void setLeagueNo(String leagueNo) {
+        this.leagueNo = leagueNo;
     }
 
-    @Override
-    public String toString() {
-        return "Club{" +
-                "foundation='" + foundation + '\'' +
-                ", belongTo='" + belongTo + '\'' +
-                ", name='" + name + '\'' +
-                ", parentCompany='" + parentCompany + '\'' +
-                ", ceo='" + ceo + '\'' +
-                ", leader='" + leader + '\'' +
-                ", color='" + color + '\'' +
-                ", league_no='" + league_no + '\'' +
-                '}';
-    }
 }
