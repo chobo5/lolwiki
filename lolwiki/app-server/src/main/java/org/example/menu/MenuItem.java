@@ -1,6 +1,7 @@
 package org.example.menu;
 
 import org.example.menu.handler.MenuItemHandler;
+import org.example.util.Prompt;
 
 public class MenuItem {
     private MenuItemHandler handler;
@@ -12,6 +13,10 @@ public class MenuItem {
 
     public String getMenuItemTitle() {
         return menuItemTitle;
+    }
+
+    public void execute(Prompt prompt) {
+        this.handler.action(prompt);
     }
 }
 

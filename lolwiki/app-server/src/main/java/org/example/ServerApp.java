@@ -1,10 +1,14 @@
 package org.example;
 
+import org.example.dao.GeneralDao;
+import org.example.dao.LeagueGeneralDaoImpl;
 import org.example.menu.Menu;
 import org.example.menu.MenuGroup;
 import org.example.menu.MenuItem;
 import org.example.menu.handler.league.LeagueListHandler;
+import org.example.util.DBConnectionPool;
 import org.example.util.Prompt;
+import org.example.vo.League;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,8 +22,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerApp {
+    DBConnectionPool connectionPool;
     MenuGroup mainMenu;
-
+    GeneralDao<League> leagueDao;
     ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
@@ -33,10 +38,12 @@ public class ServerApp {
 
     public void prepareDatabase() {
         try {
-            Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://db-ld296-kr.vpc-pub-cdb.ntruss.com/studydb", "study", "Bitcamp!@#123");
+            connectionPool = new DBConnectionPool(
+                    "jdbc:mysql://db-ld296-kr.vpc-pub-cdb.ntruss.com/private",
+                    "study", "Bitcamp!@#123");
+            leagueDao = new LeagueGeneralDaoImpl(connectionPool);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("데이터 베이스 연결 실패");
             e.printStackTrace();
         }
@@ -44,10 +51,22 @@ public class ServerApp {
 
     public void prepareMenus() {
         mainMenu = new MenuGroup("메인");
-        mainMenu.addMenu(new Menu("리그", new MenuItem(new LeagueListHandler(), "리그 목록")));
-        mainMenu.addMenu(new Menu("구단", new MenuItem(new LeagueListHandler(), "구단 목록")));
-        mainMenu.addMenu(new Menu("선수", new MenuItem(new LeagueListHandler(), "선수 목록")));
-        mainMenu.addMenu(new Menu("My", new MenuItem(new LeagueListHandler(), "리그 목록")));
+
+
+        Menu leagueMenu = new Menu("리그");
+        leagueMenu.addMenuItem(new MenuItem(new LeagueListHandler(leagueDao), "프로리그 목록"));
+        mainMenu.addMenu(leagueMenu);
+
+
+        Menu clubMenu = new Menu("구단");
+        mainMenu.addMenu(clubMenu);
+
+
+        Menu playerMenu = new Menu("선수");
+        mainMenu.addMenu(playerMenu);
+
+
+
     }
 
     public void run() {

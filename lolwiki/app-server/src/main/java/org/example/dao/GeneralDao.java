@@ -2,7 +2,7 @@ package org.example.dao;
 
 import java.util.List;
 
-public interface Dao<T> {
+public interface GeneralDao<T> {
     void add(T t);
 
     List<T> findAll();

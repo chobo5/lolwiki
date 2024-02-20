@@ -5,15 +5,17 @@ import org.example.vo.RoasterPlayer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.List;
+import java.sql.ResultSet;
 
-public class RoasterPlayerDaoImpl implements {
+
+public class RoasterPlayerDaoImpl implements RelationshipDao<RoasterPlayer> {
     DBConnectionPool connectionPool;
 
     public RoasterPlayerDaoImpl(DBConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
+    @Override
     public void add(RoasterPlayer roasterPlayer) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "insert into roaster_player(roaster_no, player_no, is_captain" +
@@ -28,29 +30,48 @@ public class RoasterPlayerDaoImpl implements {
         }
     }
 
+    @Override
+    public RoasterPlayer findByForeignKey(int foreignKeyId) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "select roaster_no, is_captain from roaster_player where player_no = ?";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, foreignKeyId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                RoasterPlayer roasterPlayer = new RoasterPlayer();
+                roasterPlayer.setRoasterNo(rs.getInt("roaster_no"));
+                roasterPlayer.setPlayerNo(foreignKeyId);
+                roasterPlayer.setCaptain(rs.getBoolean("is_captain"));
+                return roasterPlayer;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new DaoException("로스터-선수 검색 에러");
+        }
+    }
 
-    public int delete(int roasterNo, int playerNo) {
+
+    @Override
+    public int delete(int id, int foreignKeyId) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "delete from roaster_player" +
                     " where roaster_no == ?" +
                     " and player_no == ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, roasterNo);
-            pstmt.setInt(2, playerNo);
+            pstmt.setInt(1, id);
+            pstmt.setInt(2, foreignKeyId);
             return pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("로스터-선수 삭제 에러");
         }
     }
 
-
-
-
-    public int updateRoasterOfPlayer(RoasterPlayer roasterPlayer) {
+    @Override
+    public int update(RoasterPlayer roasterPlayer) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "update roaster_player" +
-                    " set roaster_no = ?" +
-                    " set is_captain = ?" +
+            String sql = "update roaster_player set" +
+                    " roaster_no = ?" +
+                    " is_captain = ?" +
                     " where player_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, roasterPlayer.getRoasterNo());
@@ -61,4 +82,5 @@ public class RoasterPlayerDaoImpl implements {
             throw new DaoException("로스터-선수 업데이트 에러");
         }
     }
+
 }

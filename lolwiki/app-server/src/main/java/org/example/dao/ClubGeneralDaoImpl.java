@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClubDaoImpl implements Dao<Club>{
+public class ClubGeneralDaoImpl implements GeneralDao<Club> {
     DBConnectionPool connectionPool;
 
-    public ClubDaoImpl(DBConnectionPool connectionPool) {
+    public ClubGeneralDaoImpl(DBConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -20,21 +20,19 @@ public class ClubDaoImpl implements Dao<Club>{
     public void add(Club club) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "INSERT INTO club(foundation," +
-                    " belong," +
                     " full_name," +
                     " name," +
                     " leader," +
                     " color," +
-                    " league_no)\n" +
-                    "VALUES(?, ?, ?, ?, ?, ?, ?);\n";
+                    " league_no)" +
+                    "VALUES(?, ?, ?, ?, ?, ?);\n";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setDate(1, club.getFoundation());
-            pstmt.setString(2, club.getBelong());
-            pstmt.setString(3, club.getFullName());
-            pstmt.setString(4, club.getName());
-            pstmt.setString(5, club.getLeader());
-            pstmt.setString(6, club.getColor());
-            pstmt.setString(7, club.getLeagueNo());
+            pstmt.setString(2, club.getFullName());
+            pstmt.setString(3, club.getName());
+            pstmt.setString(4, club.getLeader());
+            pstmt.setString(5, club.getColor());
+            pstmt.setString(6, club.getLeagueNo());
             pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
@@ -50,7 +48,7 @@ public class ClubDaoImpl implements Dao<Club>{
                     " where c.league_no = l.league_no" +
                     " order by belong desc";
             PreparedStatement pstmt = con.prepareStatement(sql);
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             List<Club> clubs = new ArrayList<>();
             while (rs.next()) {
                 Club club = new Club();
@@ -79,7 +77,7 @@ public class ClubDaoImpl implements Dao<Club>{
                     " and c.club_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, id);
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 Club club = new Club();
                 club.setFoundation(rs.getDate(1));
@@ -90,26 +88,46 @@ public class ClubDaoImpl implements Dao<Club>{
                 club.setLeague(rs.getString(6));
                 return club;
             }
+            return null;
         } catch (Exception e) {
-            throw new DaoException("구단 추가 오류");
+            throw new DaoException("구단 검색 오류");
         }
     }
 
     @Override
     public List<Club> findBy(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "";
+            String sql = "select" +
+                    " l.name" +
+                    " c.name" +
+                    " c.full_name," +
+                    " from club c league l" +
+                    " where c.league_no = l.league_no" +
+                    " and c.name like '%?%'";
             PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, keyword);
+            ResultSet rs = pstmt.executeQuery();
+            List<Club> clubs = new ArrayList<>();
+            while (rs.next()) {
+                Club club = new Club();
+                club.setLeague(rs.getString(1));
+                club.setName(rs.getString(2));
+                club.setFullName(rs.getString(3));
+                clubs.add(club);
+            }
+            return clubs;
         } catch (Exception e) {
-            throw new DaoException("구단 추가 오류");
+            throw new DaoException("구단 검색 오류");
         }
     }
 
     @Override
     public int delete(int id) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "";
+            String sql = "delete from club where club_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
         }
@@ -118,8 +136,10 @@ public class ClubDaoImpl implements Dao<Club>{
     @Override
     public int delete(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "";
+            String sql = "delete from club where club_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, keyword);
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
         }
@@ -128,8 +148,23 @@ public class ClubDaoImpl implements Dao<Club>{
     @Override
     public int update(Club club) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "";
+            String sql = "update club set" +
+                    " foundation = ?," +
+                    " full_name = ?," +
+                    " name = ?," +
+                    " leader = ?," +
+                    " color = ?," +
+                    " league_no = ?" +
+                    " where club_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setDate(1, club.getFoundation());
+            pstmt.setString(2, club.getFullName());
+            pstmt.setString(3, club.getName());
+            pstmt.setString(4, club.getLeader());
+            pstmt.setString(5, club.getColor());
+            pstmt.setString(6, club.getLeagueNo());
+            pstmt.setInt(7, club.getClubNo());
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
         }

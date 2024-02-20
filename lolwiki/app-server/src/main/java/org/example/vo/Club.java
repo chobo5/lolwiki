@@ -3,6 +3,7 @@ package org.example.vo;
 import java.sql.Date;
 
 public class Club {
+    private int clubNo;
     private String league;
     private Date foundation;
     private String fullName;
@@ -12,6 +13,14 @@ public class Club {
     private String leader;
     private String color;
     private String leagueNo;
+
+    public int getClubNo() {
+        return clubNo;
+    }
+
+    public void setClubNo(int clubNo) {
+        this.clubNo = clubNo;
+    }
 
     public String getLeague() {
         return league;

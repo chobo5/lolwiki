@@ -9,11 +9,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeagueDaoImpl implements Dao<League> {
+public class LeagueGeneralDaoImpl implements GeneralDao<League> {
 
     private DBConnectionPool connectionPool;
 
-    public LeagueDaoImpl(DBConnectionPool connectionPool) {
+    public LeagueGeneralDaoImpl(DBConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -52,13 +52,14 @@ public class LeagueDaoImpl implements Dao<League> {
     @Override
     public List<League> findAll() {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "select name, region from league";
+            String sql = "select name, full_name, region from league";
             PreparedStatement pstmt = con.prepareStatement(sql);
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             List<League> leagues = new ArrayList<>();
             while (rs.next()) {
                 League league = new League();
                 league.setName(rs.getString("name"));
+                league.setFullName(rs.getString("full_name"));
                 league.setRegion(rs.getString("region"));
                 leagues.add(league);
             }
@@ -81,7 +82,7 @@ public class LeagueDaoImpl implements Dao<League> {
                     " where name = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, keyword);
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             List<League> leagues = new ArrayList<>();
             while (rs.next()) {
                 League league = new League();
@@ -122,7 +123,7 @@ public class LeagueDaoImpl implements Dao<League> {
     @Override
     public int update(League league) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "update league full_name = ?," +
+            String sql = "update league set full_name = ?," +
                     " name = ?," +
                     " foundation_year = ?," +
                     " region = ?," +

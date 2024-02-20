@@ -3,6 +3,7 @@ package org.example.vo;
 import java.sql.Date;
 
 public class Player {
+    private int playerNo;
     private String team = "Free";
     private String korName;
     private String engName;
@@ -13,6 +14,14 @@ public class Player {
     private String position;
     private String korServerId;
     private int roasterNo;
+
+    public int getPlayerNo() {
+        return playerNo;
+    }
+
+    public void setPlayerNo(int playerNo) {
+        this.playerNo = playerNo;
+    }
 
     public String getTeam() {
         return team;

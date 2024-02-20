@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerDaoImpl implements Dao<Player> {
+public class PlayerGeneralDaoImpl implements GeneralDao<Player> {
     DBConnectionPool connectionPool;
 
-    public PlayerDaoImpl(DBConnectionPool connectionPool) {
+    public PlayerGeneralDaoImpl(DBConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -101,7 +101,7 @@ public class PlayerDaoImpl implements Dao<Player> {
                     " where game_id like '%?%'";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, keyword);
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             List<Player> players = new ArrayList<>();
             while (rs.next()) {
                 Player player = new Player();
@@ -149,7 +149,7 @@ public class PlayerDaoImpl implements Dao<Player> {
     @Override
     public int update(Player player) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "update player game_id = ?," +
+            String sql = "update player set game_id = ?," +
                     " kor_name = ?," +
                     " eng_name = ?," +
                     " birth = ?," +

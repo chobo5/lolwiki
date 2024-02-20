@@ -11,27 +11,42 @@ public class Menu {
 
     private String menuTitle;
 
-    public Menu(String menuTitle, MenuItem... menuItems) {
+    public Menu(String menuTitle) {
         this.menuTitle = menuTitle;
+    }
 
-        for (MenuItem item : menuItems) {
-            menuItemList.add(item);
+    public void addMenuItem(MenuItem menuItem) {
+        menuItemList.add(menuItem);
+    }
+
+    public void printMenu(Prompt prompt) {
+        prompt.println("[" + menuTitle + "]");
+        for (int i = 0; i < menuItemList.size(); i++) {
+            prompt.println((i + 1) + ". " + menuItemList.get(i).getMenuItemTitle());
         }
     }
 
     public void execute(Prompt prompt) {
         prompt.pushPath(menuTitle);
-        prompt.println("[" + menuTitle + "]");
-        for (int i = 0; i < menuItemList.size(); i++) {
-            prompt.println((i + 1) + ". " + menuItemList.get(i).getMenuItemTitle());
-        }
+        printMenu(prompt);
         try {
-            int input = prompt.intInput("%s>", prompt.getFullPath());
-//            menuItemList.get(input).execute(prompt);
+            while (true) {
+                String input = prompt.input("%s>", prompt.getFullPath());
+                if (input.equals("menu")) {
+                    printMenu(prompt);
+                } else if (input.equals("0")) {
+                    return;
+                } else {
+                    menuItemList.get(Integer.parseInt(input) - 1).execute(prompt);
+                }
+
+            }
         } catch (IndexOutOfBoundsException e) {
-            prompt.println("존재하지 않는 번호입니다.");
+            prompt.println("Menu - 존재하지 않는 번호입니다.");
         } catch (Exception e) {
-            prompt.println("잘못된 번호 형식입니다.");
+            prompt.println("Menu - 잘못된 번호 형식입니다.");
+        } finally {
+            prompt.popPath();
         }
     }
 
