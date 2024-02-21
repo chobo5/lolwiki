@@ -49,7 +49,6 @@ public class PlayerGeneralDaoImpl implements GeneralDao<Player> {
             String sql = "select c.name," +
                     " p.game_id," +
                     " p.kor_name," +
-                    " p.kor_server_id," +
                     " p.position" +
                     " from player p, roaster_player rp, roaster r, club c" +
                     " where p.player_no = rp.player_no" +
@@ -65,8 +64,8 @@ public class PlayerGeneralDaoImpl implements GeneralDao<Player> {
                 player.setTeam(rs.getString("name"));
                 player.setGameId(rs.getString("game_id"));
                 player.setKorName(rs.getString("kor_name"));
-                player.setKorName(rs.getString("kor_server_id"));
-                player.setKorServerId(rs.getString("position"));
+                player.setPosition(rs.getString("position"));
+                players.add(player);
             }
             System.out.println("선수 목록 가져오기 성공");
             return players;

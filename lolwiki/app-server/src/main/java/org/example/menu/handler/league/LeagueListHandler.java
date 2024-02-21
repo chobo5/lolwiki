@@ -16,7 +16,7 @@ public class LeagueListHandler implements MenuItemHandler {
 
     @Override
     public void action(Prompt prompt) {
-        prompt.println("League Of Legends 프로리그 목록");
+        prompt.println("[프로리그 목록]");
         prompt.printf("%-4s\t%-40s\t%s\n", "약칭", "정식 명칭", "지역");
         try {
             List<League> leagues = leagueGeneralDao.findAll();

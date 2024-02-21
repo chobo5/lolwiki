@@ -4,7 +4,9 @@ import util.Prompt;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 
 public class ClientApp {
@@ -38,9 +40,9 @@ public class ClientApp {
 
             }
 
-        } catch (Exception e) {
-            System.out.println("클라이언트 실행 오류");
-            e.printStackTrace();
+        } catch (Exception e3) {
+            System.out.println("클라이언트 앱 종료");
+
         }
     }
 }

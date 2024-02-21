@@ -116,7 +116,7 @@ public class League {
                 "leagueNo=" + leagueNo +
                 ", name='" + name + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", foundationDate='" + foundationYear + '\'' +
+                ", foundationYear='" + foundationYear + '\'' +
                 ", region='" + region + '\'' +
                 ", main_agent='" + mainAgent + '\'' +
                 ", slogan='" + slogan + '\'' +

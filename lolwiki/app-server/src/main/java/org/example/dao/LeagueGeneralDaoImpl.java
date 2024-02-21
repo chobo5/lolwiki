@@ -30,7 +30,7 @@ public class LeagueGeneralDaoImpl implements GeneralDao<League> {
                     " stadium," +
                     " recent_champ," +
                     " most_champ," +
-                    " most_player values(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?)";
+                    " most_player) values(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, league.getFullName());
             pstmt.setString(2, league.getName());
@@ -45,7 +45,9 @@ public class LeagueGeneralDaoImpl implements GeneralDao<League> {
             pstmt.setString(11, league.getMostPlayer());
             pstmt.executeUpdate();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DaoException("리그 추가 오류");
+
         }
     }
 

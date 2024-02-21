@@ -124,6 +124,10 @@ ALTER TABLE `league`
 
 ALTER TABLE league CHANGE foundation_date foundation_year VARCHAR(20);
 
+ALTER TABLE league CHANGE recent_champ recent_champ VARCHAR(50);
+ALTER TABLE league CHANGE most_champ most_champ VARCHAR(50);
+ALTER TABLE league CHANGE most_player most_player VARCHAR(50);
+
 -- 로스터
 CREATE TABLE `roaster` (
 	`roaster_no` INT         NOT NULL COMMENT '로스터번호', -- 로스터번호

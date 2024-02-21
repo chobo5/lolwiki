@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Menu {
 
-    private static List<MenuItem> menuItemList = new ArrayList<>();
+    private List<MenuItem> menuItemList = new ArrayList<>();
 
     private String menuTitle;
 
