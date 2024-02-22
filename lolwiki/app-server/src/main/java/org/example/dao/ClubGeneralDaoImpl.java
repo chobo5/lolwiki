@@ -32,7 +32,7 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
             pstmt.setString(3, club.getName());
             pstmt.setString(4, club.getLeader());
             pstmt.setString(5, club.getColor());
-            pstmt.setString(6, club.getLeagueNo());
+            pstmt.setInt(6, club.getLeagueNo());
             pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
@@ -162,7 +162,7 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
             pstmt.setString(3, club.getName());
             pstmt.setString(4, club.getLeader());
             pstmt.setString(5, club.getColor());
-            pstmt.setString(6, club.getLeagueNo());
+            pstmt.setInt(6, club.getLeagueNo());
             pstmt.setInt(7, club.getClubNo());
             return pstmt.executeUpdate();
         } catch (Exception e) {

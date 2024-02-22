@@ -17,6 +17,23 @@ public class LeagueGeneralDaoImpl implements GeneralDao<League> {
         this.connectionPool = connectionPool;
     }
 
+    public int getPrimaryKeyNo(String leagueName) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "select league_no from league where name = ?";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, leagueName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("league_no");
+            }
+            return -1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DaoException("리그 번호 검색 오류");
+
+        }
+    }
+
     @Override
     public void add(League league) {
         try (Connection con = connectionPool.getConnection()) {
@@ -80,6 +97,7 @@ public class LeagueGeneralDaoImpl implements GeneralDao<League> {
     public List<League> findBy(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "select name," +
+                    " league_no," +
                     " region," +
                     " where name = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
@@ -97,6 +115,7 @@ public class LeagueGeneralDaoImpl implements GeneralDao<League> {
             throw new DaoException("리그 불러오기 오류");
         }
     }
+
 
     @Override
     public int delete(int id) {

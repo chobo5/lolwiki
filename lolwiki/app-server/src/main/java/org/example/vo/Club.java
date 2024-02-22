@@ -8,11 +8,9 @@ public class Club {
     private Date foundation;
     private String fullName;
     private String name;
-    private String parentCompany;
-    private String ceo;
     private String leader;
     private String color;
-    private String leagueNo;
+    private int leagueNo;
 
     public int getClubNo() {
         return clubNo;
@@ -54,22 +52,6 @@ public class Club {
         this.name = name;
     }
 
-    public String getParentCompany() {
-        return parentCompany;
-    }
-
-    public void setParentCompany(String parentCompany) {
-        this.parentCompany = parentCompany;
-    }
-
-    public String getCeo() {
-        return ceo;
-    }
-
-    public void setCeo(String ceo) {
-        this.ceo = ceo;
-    }
-
     public String getLeader() {
         return leader;
     }
@@ -86,11 +68,11 @@ public class Club {
         this.color = color;
     }
 
-    public String getLeagueNo() {
+    public int getLeagueNo() {
         return leagueNo;
     }
 
-    public void setLeagueNo(String leagueNo) {
+    public void setLeagueNo(int leagueNo) {
         this.leagueNo = leagueNo;
     }
 

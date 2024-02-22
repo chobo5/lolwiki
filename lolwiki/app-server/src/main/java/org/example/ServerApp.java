@@ -7,6 +7,7 @@ import org.example.dao.PlayerGeneralDaoImpl;
 import org.example.menu.Menu;
 import org.example.menu.MenuGroup;
 import org.example.menu.MenuItem;
+import org.example.menu.handler.club.ClubAddHandler;
 import org.example.menu.handler.club.ClubListHandler;
 import org.example.menu.handler.league.LeagueAddHandler;
 import org.example.menu.handler.league.LeagueListHandler;
@@ -72,6 +73,7 @@ public class ServerApp {
 
         Menu clubMenu = new Menu("구단");
         clubMenu.addMenuItem(new MenuItem(new ClubListHandler(clubDao),"구단 목록"));
+        clubMenu.addMenuItem(new MenuItem(new ClubAddHandler(clubDao, leagueDao), "구단 추가"));
         mainMenu.addMenu(clubMenu);
 
 

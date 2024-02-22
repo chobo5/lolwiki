@@ -17,5 +17,9 @@ public interface GeneralDao<T> {
 
     int update(T t);
 
+    default int getPrimaryKeyNo(String name) {
+        return 0;
+    }
+
 
 }
