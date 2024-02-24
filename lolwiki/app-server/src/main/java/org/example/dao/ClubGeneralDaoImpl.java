@@ -46,7 +46,7 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
                     " l.name" +
                     " from club c, league l" +
                     " where c.league_no = l.league_no" +
-                    " order by belong desc";
+                    " order by c.league_no desc";
             PreparedStatement pstmt = con.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
             List<Club> clubs = new ArrayList<>();
@@ -58,7 +58,7 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
             }
             return clubs;
         } catch (Exception e) {
-            throw new DaoException("구단 추가 오류");
+            throw new DaoException("구단 목록 오류");
         }
     }
 
