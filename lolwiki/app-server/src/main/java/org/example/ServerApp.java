@@ -11,6 +11,7 @@ import org.example.menu.handler.club.ClubAddHandler;
 import org.example.menu.handler.club.ClubListHandler;
 import org.example.menu.handler.league.LeagueAddHandler;
 import org.example.menu.handler.league.LeagueListHandler;
+import org.example.menu.handler.player.PlayerAddHandler;
 import org.example.menu.handler.player.PlayerListHandler;
 import org.example.util.DBConnectionPool;
 import org.example.util.Prompt;
@@ -79,6 +80,7 @@ public class ServerApp {
 
         Menu playerMenu = new Menu("선수");
         playerMenu.addMenuItem(new MenuItem(new PlayerListHandler(playerDao), "선수 목록"));
+        playerMenu.addMenuItem(new MenuItem(new PlayerAddHandler(playerDao, clubDao), "선수 추가"));
         mainMenu.addMenu(playerMenu);
 
 

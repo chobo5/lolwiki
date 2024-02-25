@@ -33,7 +33,6 @@ public class ClubAddHandler implements MenuItemHandler {
             club.setFoundation(prompt.inputDate("구단 설립일: "));
             club.setFullName(prompt.input("구단 정식 명칭: "));
             club.setName(prompt.input("구단명:"));
-            club.setLeader(prompt.input("단장: "));
             club.setColor(prompt.input("팀 컬러: "));
             club.setLeagueNo(leagueNo);
             clubGeneralDao.add(club);

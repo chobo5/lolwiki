@@ -22,17 +22,15 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
             String sql = "INSERT INTO club(foundation," +
                     " full_name," +
                     " name," +
-                    " leader," +
                     " color," +
                     " league_no)" +
-                    "VALUES(?, ?, ?, ?, ?, ?);\n";
+                    "VALUES(?, ?, ?, ?, ?);\n";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setDate(1, club.getFoundation());
             pstmt.setString(2, club.getFullName());
             pstmt.setString(3, club.getName());
-            pstmt.setString(4, club.getLeader());
-            pstmt.setString(5, club.getColor());
-            pstmt.setInt(6, club.getLeagueNo());
+            pstmt.setString(4, club.getColor());
+            pstmt.setInt(5, club.getLeagueNo());
             pstmt.executeUpdate();
         } catch (Exception e) {
             throw new DaoException("구단 추가 오류");
@@ -69,7 +67,6 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
                     " c.foundation" +
                     " c.full_name," +
                     " c.name," +
-                    " c.leader," +
                     " c.color," +
                     " l.name" +
                     " from club c league l" +
@@ -83,12 +80,26 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
                 club.setFoundation(rs.getDate(1));
                 club.setFullName(rs.getString(2));
                 club.setName(rs.getString(3));
-                club.setLeader(rs.getString(4));
                 club.setColor(rs.getString(5));
                 club.setLeague(rs.getString(6));
                 return club;
             }
             return null;
+        } catch (Exception e) {
+            throw new DaoException("구단 검색 오류");
+        }
+    }
+
+    public int findByWord(String str) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "select" +
+                    " club_no" +
+                    " from club" +
+                    " where name like '%?%'";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, str);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.getInt("club_no");
         } catch (Exception e) {
             throw new DaoException("구단 검색 오류");
         }
@@ -152,7 +163,6 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
                     " foundation = ?," +
                     " full_name = ?," +
                     " name = ?," +
-                    " leader = ?," +
                     " color = ?," +
                     " league_no = ?" +
                     " where club_no = ?";
@@ -160,7 +170,6 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
             pstmt.setDate(1, club.getFoundation());
             pstmt.setString(2, club.getFullName());
             pstmt.setString(3, club.getName());
-            pstmt.setString(4, club.getLeader());
             pstmt.setString(5, club.getColor());
             pstmt.setInt(6, club.getLeagueNo());
             pstmt.setInt(7, club.getClubNo());

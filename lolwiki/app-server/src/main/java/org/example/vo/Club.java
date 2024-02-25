@@ -8,7 +8,6 @@ public class Club {
     private Date foundation;
     private String fullName;
     private String name;
-    private String leader;
     private String color;
     private int leagueNo;
 
@@ -50,14 +49,6 @@ public class Club {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLeader() {
-        return leader;
-    }
-
-    public void setLeader(String leader) {
-        this.leader = leader;
     }
 
     public String getColor() {
