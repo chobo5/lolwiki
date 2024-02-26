@@ -6,6 +6,7 @@ import org.example.vo.Club;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,16 +93,20 @@ public class ClubGeneralDaoImpl implements GeneralDao<Club> {
 
     public int findByWord(String str) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "select" +
-                    " club_no" +
-                    " from club" +
-                    " where name like '%?%'";
+            String sql = "SELECT club_no FROM club WHERE name LIKE ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, str);
+            pstmt.setString(1, "%" + str + "%");
             ResultSet rs = pstmt.executeQuery();
-            return rs.getInt("club_no");
+
+            if (rs.next()) {
+                int clubNo = rs.getInt("club_no");
+                System.out.println(clubNo);
+                return clubNo;
+            } else {
+                throw new DaoException("해당하는 구단이 없습니다.");
+            }
         } catch (Exception e) {
-            throw new DaoException("구단 검색 오류");
+            throw new DaoException("구단 검색 오류", e);
         }
     }
 

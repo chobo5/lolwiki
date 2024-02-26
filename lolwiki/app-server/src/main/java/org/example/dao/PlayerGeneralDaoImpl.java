@@ -27,15 +27,16 @@ public class PlayerGeneralDaoImpl implements GeneralDao<Player> {
                     " debut," +
                     " position," +
                     " kor_server_id," +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, player.getKorName());
             pstmt.setString(2, player.getEngName());
-            pstmt.setDate(3, player.getBirth());
-            pstmt.setString(4, player.getNationality());
-            pstmt.setDate(5, player.getDebut());
-            pstmt.setString(6, player.getPosition());
-            pstmt.setString(7, player.getKorServerId());
+            pstmt.setString(3, player.getGameId());
+            pstmt.setDate(4, player.getBirth());
+            pstmt.setString(5, player.getNationality());
+            pstmt.setDate(6, player.getDebut());
+            pstmt.setString(7, player.getPosition());
+            pstmt.setString(8, player.getKorServerId());
             pstmt.executeUpdate();
 
         } catch (Exception e) {
@@ -82,7 +83,7 @@ public class PlayerGeneralDaoImpl implements GeneralDao<Player> {
     }
 
     @Override
-    public List<Player> findBy(String keyword) {
+    public List<Player> findBy(String playerGameId) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "select c.name" +
                     "p.game_id," +

@@ -44,16 +44,16 @@ public class RoasterGeneralDaoImpl implements GeneralDao<Roaster>{
     }
 
     @Override
-    public Roaster findBy(int season) {
+    public Roaster findBy(int clubNo) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "select" +
                     " roaster_no" +
                     " director" +
                     " coach" +
                     " from roaster" +
-                    " where  season = ?";
+                    " where  club_no = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, season);
+            pstmt.setInt(1, clubNo);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 Roaster roaster = new Roaster();
