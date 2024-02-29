@@ -15,10 +15,11 @@ import java.io.PrintWriter;
 public class JoinServlet extends HttpServlet {
 
     UserDaoImpl userDao;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();x
+        PrintWriter out = resp.getWriter();
         out.println("<!DOCTYPE html>");
         out.println("<html lang='en'>");
         out.println("<head>");

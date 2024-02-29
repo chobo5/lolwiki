@@ -184,3 +184,9 @@ Temporary Items
 *.icloud
 
 # End of https://www.toptal.com/developers/gitignore/api/database,java,intellij,macos
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
