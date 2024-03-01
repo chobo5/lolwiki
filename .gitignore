@@ -1,6 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/database,java,intellij,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=database,java,intellij,macos
-
+/lolwiki
 ### Database ###
 *.accdb
 *.db

@@ -17,16 +17,14 @@ public class JoinServlet extends HttpServlet {
     UserDaoImpl userDao;
 
     @Override
+    public void init() throws ServletException {
+        this.userDao = (UserDaoImpl) this.getServletContext().getAttribute("userDao");
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html lang='en'>");
-        out.println("<head>");
-        out.println("  <meta charset='UTF-8'>");
-        out.println("  <title>중고 장터</title>");
-        out.println("</head>");
-        out.println("<body>");
 
         req.getRequestDispatcher("/header").include(req, resp);
         out.println("<form action='/auth/join' method='post'>");
@@ -49,34 +47,26 @@ public class JoinServlet extends HttpServlet {
         out.println("</form>");
         req.getRequestDispatcher("/footer").include(req, resp);
 
-        out.println("</body>");
-        out.println("</html>");
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("html/text;charset=UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
         String photo = req.getParameter("photo");
         String nickName = req.getParameter("nickname");
         String phoneNo = req.getParameter("phoneNo");
         String password1 = req.getParameter("password1");
         String password2 = req.getParameter("password2");
-        out.println("<!DOCTYPE html>");
-        out.println("<html lang='en'>");
-        out.println("<head>");
-        out.println("  <meta charset='UTF-8'>");
-        out.println("  <title>중고 장터</title>");
-        out.println("</head>");
-        out.println("<body>");
+        req.getRequestDispatcher("/header").include(req, resp);
+
 
         if (!password1.equals(password2)) {
             out.println("<h2>비밀번호가 일치하지 않습니다.</h2>");
             resp.setHeader("Refresh", "1;url=/auth/join");
-        } else if (userDao.findBy(nickName).getNickname() != null) {
-            out.println("<h2>존재하는 닉네임 입니다.</h2>");
+        } else if (userDao.findBy(nickName) != null) {
+            out.println("<h2>이미 존재하는 닉네임 입니다.</h2>");
             resp.setHeader("Refresh", "1;url=/auth/join");
         } else {
             out.println("<h2>가입이 완료되었습니다.</h2>");
@@ -89,7 +79,7 @@ public class JoinServlet extends HttpServlet {
             resp.setHeader("Refresh", "1;url=/home");
         }
 
-        out.println("</body>");
-        out.println("</html>");
+        req.getRequestDispatcher("/footer").include(req, resp);
+
     }
 }

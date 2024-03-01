@@ -43,6 +43,8 @@ ALTER TABLE user
 	no -- 회원 번호
 	);
 
+ALTER TABLE user MODIFY password VARCHAR(200);
+
 -- 유저 유니크 인덱스
 CREATE UNIQUE INDEX UIX_user
 	ON user ( -- 유저

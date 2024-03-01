@@ -1,5 +1,7 @@
 package secondhandmarket.servlet;
 
+import secondhandmarket.vo.User;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,14 +17,27 @@ public class HomeServlet extends HttpServlet {
         resp.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = resp.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html lang='en'>");
-        out.println("<head>");
-        out.println("  <meta charset='UTF-8'>");
-        out.println("  <title>중고 장터</title>");
-        out.println("</head>");
-        out.println("<body>");
+
         req.getRequestDispatcher("/header").include(req, resp);
+        User loginUser = (User) req.getSession().getAttribute("loginUser");
+        if (loginUser == null) {
+            out.println("<a href='/auth/join'>회원가입</a>");
+            out.println("<a href='/auth/login'>로그인</a>");
+        } else {
+            out.println("<a href='/auth/logout'>로그아웃</a>");
+        }
+        out.println("<br>");
+        out.println("<br>");
+        out.println("<form action='/goods/list' method='post'");
+        out.println("<div>");
+        out.println("<input type='text' placeholder='검색어를 입력해주세요'" );
+        out.println("</div>");
+        out.println("</form>");
+        if (loginUser != null) {
+            out.println("<div>");
+            out.println("<a href='/goods/add'>1. 상품 등록하기</a>" );
+            out.println("</div>");
+        }
 
         req.getRequestDispatcher("/footer").include(req, resp);
         out.println("</body>");
