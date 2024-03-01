@@ -82,6 +82,9 @@ ALTER TABLE goods
 	no -- 회원 번호
 	);
 
+ALTER TABLE goods MODIFY COLUMN reg_date DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+
 -- 상품사진
 ALTER TABLE goods_photo
 	ADD CONSTRAINT FK_goods_TO_goods_photo -- 상품 -> 상품사진

@@ -1,5 +1,6 @@
 package secondhandmarket.listener;
 
+import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.util.DBConnectionPool;
 
@@ -18,9 +19,12 @@ public class ContextLoadListener implements ServletContextListener {
         DBConnectionPool connectionPool = new DBConnectionPool(
                 "jdbc:mysql://db-ld296-kr.vpc-pub-cdb.ntruss.com/private", "study", "Bitcamp!@#123");
         UserDaoImpl userDao = new UserDaoImpl(connectionPool);
+        GoodsDaoImpl goodsDao = new GoodsDaoImpl(connectionPool);
 
         ServletContext context = sce.getServletContext();
         context.setAttribute("userDao", userDao);
+        context.setAttribute("goodsDao", goodsDao);
+
 
     }
 }

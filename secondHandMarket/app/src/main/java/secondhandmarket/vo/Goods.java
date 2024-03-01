@@ -4,10 +4,10 @@ import java.sql.Date;
 
 public class Goods {
     private String name;
-    private String price;
+    private int price;
     private String spec;
-    private int user_no;
-    private Date reg_date;
+    private int userNo;
+    private Date regDate;
 
     public String getName() {
         return name;
@@ -17,11 +17,11 @@ public class Goods {
         this.name = name;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -33,19 +33,19 @@ public class Goods {
         this.spec = spec;
     }
 
-    public int getUser_no() {
-        return user_no;
+    public int getUserNo() {
+        return userNo;
     }
 
-    public void setUser_no(int user_no) {
-        this.user_no = user_no;
+    public void setUserNo(int userNo) {
+        this.userNo = userNo;
     }
 
-    public Date getReg_date() {
-        return reg_date;
+    public Date getRegDate() {
+        return regDate;
     }
 
-    public void setReg_date(Date reg_date) {
-        this.reg_date = reg_date;
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
     }
 }
