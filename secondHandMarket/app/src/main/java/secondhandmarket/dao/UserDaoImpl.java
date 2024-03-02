@@ -16,14 +16,19 @@ public class UserDaoImpl {
 
     public void add(User user) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "INSERT INTO user(nickname, phone_no, password, photo)" +
-                    " VALUES(?, ?, sha2(?,256), ?)";
+            String sql = "INSERT INTO user(nickname, phone_no, password)" +
+                    " VALUES(?, ?, sha2(?,256))";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getNickname());
             ps.setString(2, user.getPhoneNo());
             ps.setString(3, user.getPassword());
-            ps.setString(4, user.getPhoto());
             ps.executeUpdate();
+
+            try (ResultSet keyRs = ps.getGeneratedKeys()) {
+                keyRs.next();
+                user.setNo(keyRs.getInt(1));
+            }
+
         } catch (Exception e) {
             System.out.println("MemberDaoImpl - 회원 추가 오류");
         }
@@ -46,12 +51,12 @@ public class UserDaoImpl {
             String sql = "UPDATE user SET nickname = ?," +
                     " phone_no = ?," +
                     " password = ?," +
-                    " photo = ?";
+                    " where user_no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getNickname());
             ps.setString(2, user.getPhoneNo());
             ps.setString(3, user.getPassword());
-            ps.setString(4, user.getPhoto());
+            ps.setInt(4, user.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
             System.out.println("MemberDaoImpl - 회원 업데이트 오류");
@@ -64,7 +69,6 @@ public class UserDaoImpl {
             String sql = "SELECT no," +
                     " nickname," +
                     " phone_no," +
-                    " photo" +
                     " from user" +
                     " where nickname like ?";
             PreparedStatement ps = con.prepareStatement(sql);
@@ -75,7 +79,6 @@ public class UserDaoImpl {
                 user.setNo(rs.getInt("no"));
                 user.setNickname(rs.getString("nickname"));
                 user.setPhoneNo(rs.getString("phone_no"));
-                user.setPhoto(rs.getString("photo"));
                 return user;
             }
 
@@ -89,8 +92,7 @@ public class UserDaoImpl {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "SELECT no," +
                     " nickname," +
-                    " phone_no," +
-                    " photo" +
+                    " phone_no" +
                     " from user" +
                     " where nickname = ?" +
                     " and password = sha2(?, 256)";
@@ -103,7 +105,6 @@ public class UserDaoImpl {
                 user.setNo(rs.getInt("no"));
                 user.setNickname(rs.getString("nickname"));
                 user.setPhoneNo(rs.getString("phone_no"));
-                user.setPhoto(rs.getString("photo"));
                 return user;
             }
 

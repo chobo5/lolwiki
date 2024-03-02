@@ -5,6 +5,7 @@ import secondhandmarket.vo.Goods;
 import secondhandmarket.vo.User;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/goods/add")
 public class GoodsAddServlet extends HttpServlet {
     GoodsDaoImpl goodsDao;
@@ -34,7 +36,7 @@ public class GoodsAddServlet extends HttpServlet {
                 resp.setHeader("Refresh", "1;url=/auth/login");
             }
             req.getRequestDispatcher("/header").include(req, resp);
-            out.println("<form action='/goods/add' method='post'>");
+            out.println("<form action='/goods/add' method='post' enctpye='multipart/form-data'>");
             out.println("<div>");
             out.println("상품 사진: <input name='photo' type='file'>");
             out.println("</div>");

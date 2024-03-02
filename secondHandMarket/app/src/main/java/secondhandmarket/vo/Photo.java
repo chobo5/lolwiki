@@ -1,9 +1,9 @@
 package secondhandmarket.vo;
 
-public class GoodsPhoto {
+public class Photo {
     private int no;
     private String path;
-    private int goodsNo;
+    private int refNo;
 
     public int getNo() {
         return no;
@@ -21,11 +21,11 @@ public class GoodsPhoto {
         this.path = path;
     }
 
-    public int getGoodsNo() {
-        return goodsNo;
+    public int getRefNo() {
+        return refNo;
     }
 
-    public void setGoodsNo(int goodsNo) {
-        this.goodsNo = goodsNo;
+    public void setRefNo(int refNo) {
+        this.refNo = refNo;
     }
 }

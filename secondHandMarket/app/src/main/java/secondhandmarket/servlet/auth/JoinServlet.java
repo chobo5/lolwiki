@@ -1,24 +1,39 @@
 package secondhandmarket.servlet.auth;
 
+import secondhandmarket.dao.PhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
+import secondhandmarket.util.TransactionManager;
+import secondhandmarket.vo.Photo;
 import secondhandmarket.vo.User;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.UUID;
 
+@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/auth/join")
 public class JoinServlet extends HttpServlet {
 
-    UserDaoImpl userDao;
+    private UserDaoImpl userDao;
+    private PhotoDaoImpl photoDao;
+    private String uploadDir;
+    private TransactionManager txManager;
 
     @Override
     public void init() throws ServletException {
         this.userDao = (UserDaoImpl) this.getServletContext().getAttribute("userDao");
+        this.photoDao = (PhotoDaoImpl) this.getServletContext().getAttribute("photoDao");
+        uploadDir = this.getServletContext().getRealPath("/upload/user");
+        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
+
     }
 
     @Override
@@ -27,7 +42,7 @@ public class JoinServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         req.getRequestDispatcher("/header").include(req, resp);
-        out.println("<form action='/auth/join' method='post'>");
+        out.println("<form action='/auth/join' method='post' enctype='multipart/form-data'>");
         out.println("<div>");
         out.println("프로필 사진: <input name='photo' type='file'>");
         out.println("</div>");
@@ -54,11 +69,24 @@ public class JoinServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
-        String photo = req.getParameter("photo");
         String nickName = req.getParameter("nickname");
         String phoneNo = req.getParameter("phoneNo");
         String password1 = req.getParameter("password1");
         String password2 = req.getParameter("password2");
+
+        Photo profilePhoto = new Photo();
+
+        Collection<Part> parts = req.getParts();
+        for (Part part : parts) {
+            if (!part.getName().equals("photo") || part.getSize() == 0) {
+                continue;
+            } else {
+                String filename = UUID.randomUUID().toString();
+                part.write(this.uploadDir + "/" + filename);
+                profilePhoto.setPath(filename);
+            }
+        }
+
         req.getRequestDispatcher("/header").include(req, resp);
 
 
@@ -71,15 +99,30 @@ public class JoinServlet extends HttpServlet {
         } else {
             out.println("<h2>가입이 완료되었습니다.</h2>");
             User user = new User();
-            user.setPhoto(photo);
             user.setNickname(nickName);
             user.setPhoneNo(phoneNo);
             user.setPassword(password1);
-            userDao.add(user);
-            resp.setHeader("Refresh", "1;url=/home");
-        }
+            try {
+                txManager.startTransaction();
+                userDao.add(user);
+                profilePhoto.setRefNo(user.getNo());
+                photoDao.add(profilePhoto);
+                txManager.commit();
 
+            } catch (Exception e) {
+                try {
+                    txManager.rollback();
+                } catch (Exception ex) {
+                }
+                throw new RuntimeException(e);
+            }
+
+        }
         req.getRequestDispatcher("/footer").include(req, resp);
+
+        resp.setHeader("Refresh", "1;url=/home");
+
+
 
     }
 }

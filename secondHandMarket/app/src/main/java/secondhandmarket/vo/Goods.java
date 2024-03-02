@@ -3,11 +3,20 @@ package secondhandmarket.vo;
 import java.sql.Date;
 
 public class Goods {
+    private int no;
     private String name;
     private int price;
     private String spec;
     private int userNo;
     private Date regDate;
+
+    public int getNo() {
+        return no;
+    }
+
+    public void setNo(int no) {
+        this.no = no;
+    }
 
     public String getName() {
         return name;

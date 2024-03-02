@@ -35,7 +35,7 @@ public class GoodsDaoImpl {
 
     public List<Goods> findBy(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "SELECT" +
+            String sql = "SELECT no" +
                     " name," +
                     " price," +
                     " spec," +
@@ -49,6 +49,7 @@ public class GoodsDaoImpl {
             List<Goods> list = new ArrayList<>();
             while (rs.next()) {
                 Goods goods = new Goods();
+                goods.setNo(rs.getInt("no"));
                 goods.setName(rs.getString("name"));
                 goods.setPrice(rs.getInt("price"));
                 goods.setSpec(rs.getString("spec"));

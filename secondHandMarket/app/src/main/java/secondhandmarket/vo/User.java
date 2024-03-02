@@ -5,7 +5,7 @@ public class User {
     private String nickname;
     private String phoneNo;
     private String password;
-    private String photo;
+    private Photo photo;
 
     public int getNo() {
         return no;
@@ -39,11 +39,11 @@ public class User {
         this.password = password;
     }
 
-    public String getPhoto() {
+    public Photo getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(Photo photo) {
         this.photo = photo;
     }
 }

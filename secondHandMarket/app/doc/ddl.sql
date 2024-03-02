@@ -72,6 +72,9 @@ ALTER TABLE goods_photo
 ALTER TABLE goods_photo
 	MODIFY COLUMN no INT NOT NULL AUTO_INCREMENT;
 
+alter table goods_photo rename photo;
+
+alter table photo change goods_no ref_no int;
 -- 상품
 ALTER TABLE goods
 	ADD CONSTRAINT FK_user_TO_goods -- 유저 -> 상품
