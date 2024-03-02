@@ -1,4 +1,0 @@
-rootProject.name = 'lolwiki'
-include 'app-client'
-include 'app-server'
-
