@@ -18,7 +18,7 @@ public class UserDaoImpl {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "INSERT INTO user(nickname, phone_no, password)" +
                     " VALUES(?, ?, sha2(?,256))";
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getNickname());
             ps.setString(2, user.getPhoneNo());
             ps.setString(3, user.getPassword());
@@ -30,7 +30,7 @@ public class UserDaoImpl {
             }
 
         } catch (Exception e) {
-            System.out.println("MemberDaoImpl - 회원 추가 오류");
+            System.out.println("UserDaoImpl - 회원 추가 오류");
         }
     }
 
@@ -41,7 +41,7 @@ public class UserDaoImpl {
             ps.setInt(1, no);
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("MemberDaoImpl - 회원 삭제 오류");
+            System.out.println("UserDaoImpl - 회원 삭제 오류");
         }
         return -1;
     }
@@ -59,7 +59,7 @@ public class UserDaoImpl {
             ps.setInt(4, user.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("MemberDaoImpl - 회원 업데이트 오류");
+            System.out.println("UserDaoImpl - 회원 업데이트 오류");
         }
         return -1;
     }
@@ -83,7 +83,7 @@ public class UserDaoImpl {
             }
 
         } catch (Exception e) {
-            System.out.println("MemberDaoImpl - 회원 검색 오류");
+            System.out.println("UserDaoImpl - 회원 검색 오류");
         }
         return null;
     }
@@ -109,7 +109,7 @@ public class UserDaoImpl {
             }
 
         } catch (Exception e) {
-            System.out.println("MemberDaoImpl - 닉네임,패스워드로 회원 찾기 오류");
+            System.out.println("UserDaoImpl - 닉네임,패스워드로 회원 찾기 오류");
         }
         return null;
     }

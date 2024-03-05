@@ -21,12 +21,17 @@ public class GoodsDaoImpl {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "INSERT INTO goods(name, price, spec, user_no)" +
                     " VALUES(?, ?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, goods.getName());
             ps.setInt(2, goods.getPrice());
             ps.setString(3, goods.getSpec());
             ps.setInt(4, goods.getUserNo());
             ps.executeUpdate();
+
+            try (ResultSet keyRs = ps.getGeneratedKeys();) {
+                keyRs.next();
+                goods.setNo(keyRs.getInt(1));
+            }
             
         } catch (Exception e) {
             System.out.println("GoodsDaoImpl - 상품 추가 오류");

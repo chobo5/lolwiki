@@ -28,4 +28,14 @@ public class Photo {
     public void setRefNo(int refNo) {
         this.refNo = refNo;
     }
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                "no=" + no +
+                ", path='" + path + '\'' +
+                ", refNo=" + refNo +
+                '}';
+    }
 }
+

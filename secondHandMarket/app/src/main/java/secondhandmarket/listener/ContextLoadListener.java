@@ -1,11 +1,11 @@
 package secondhandmarket.listener;
 
 import secondhandmarket.dao.GoodsDaoImpl;
-import secondhandmarket.dao.PhotoDaoImpl;
+import secondhandmarket.dao.GoodsPhotoDaoImpl;
+import secondhandmarket.dao.UserPhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.util.DBConnectionPool;
 import secondhandmarket.util.TransactionManager;
-import secondhandmarket.vo.Photo;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -24,14 +24,16 @@ public class ContextLoadListener implements ServletContextListener {
         TransactionManager txManager = new TransactionManager(connectionPool);
         UserDaoImpl userDao = new UserDaoImpl(connectionPool);
         GoodsDaoImpl goodsDao = new GoodsDaoImpl(connectionPool);
-        PhotoDaoImpl photoDao = new PhotoDaoImpl(connectionPool);
+        UserPhotoDaoImpl userPhotoDao = new UserPhotoDaoImpl(connectionPool);
+        GoodsPhotoDaoImpl goodsPhotoDao = new GoodsPhotoDaoImpl(connectionPool);
 
 
         ServletContext context = sce.getServletContext();
         context.setAttribute("txManager", txManager);
         context.setAttribute("userDao", userDao);
         context.setAttribute("goodsDao", goodsDao);
-        context.setAttribute("photoDao", photoDao);
+        context.setAttribute("userPhotoDao", userPhotoDao);
+        context.setAttribute("goodsPhotoDao", goodsPhotoDao);
 
 
 

@@ -30,7 +30,14 @@ public class HeaderServlet extends HttpServlet {
         out.println("</head>");
         out.println("<body>");
         out.println("<h1>중고 장터</h1>");
-        out.printf("<span>%s</span>\n", nickname);
+        if (loginUser == null) {
+            out.println("<a href='/auth/join'>회원가입</a>");
+            out.println("<a href='/auth/login'>로그인</a>");
+        } else {
+            out.printf("<span>%s</span>\n", nickname);
+            out.println("<a href='/auth/logout'>로그아웃</a>");
+        }
+
 
     }
 }

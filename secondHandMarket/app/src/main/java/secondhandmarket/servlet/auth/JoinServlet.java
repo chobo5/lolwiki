@@ -1,6 +1,6 @@
 package secondhandmarket.servlet.auth;
 
-import secondhandmarket.dao.PhotoDaoImpl;
+import secondhandmarket.dao.UserPhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.util.TransactionManager;
 import secondhandmarket.vo.Photo;
@@ -23,14 +23,14 @@ import java.util.UUID;
 public class JoinServlet extends HttpServlet {
 
     private UserDaoImpl userDao;
-    private PhotoDaoImpl photoDao;
+    private UserPhotoDaoImpl photoDao;
     private String uploadDir;
     private TransactionManager txManager;
 
     @Override
     public void init() throws ServletException {
         this.userDao = (UserDaoImpl) this.getServletContext().getAttribute("userDao");
-        this.photoDao = (PhotoDaoImpl) this.getServletContext().getAttribute("photoDao");
+        this.photoDao = (UserPhotoDaoImpl) this.getServletContext().getAttribute("userPhotoDao");
         uploadDir = this.getServletContext().getRealPath("/upload/user");
         txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
 
@@ -106,6 +106,7 @@ public class JoinServlet extends HttpServlet {
                 txManager.startTransaction();
                 userDao.add(user);
                 profilePhoto.setRefNo(user.getNo());
+                System.out.println(profilePhoto);
                 photoDao.add(profilePhoto);
                 txManager.commit();
 

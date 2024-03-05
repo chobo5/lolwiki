@@ -20,12 +20,7 @@ public class HomeServlet extends HttpServlet {
 
         req.getRequestDispatcher("/header").include(req, resp);
         User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (loginUser == null) {
-            out.println("<a href='/auth/join'>회원가입</a>");
-            out.println("<a href='/auth/login'>로그인</a>");
-        } else {
-            out.println("<a href='/auth/logout'>로그아웃</a>");
-        }
+
         out.println("<br>");
         out.println("<br>");
         out.println("<form action='/goods/list'");

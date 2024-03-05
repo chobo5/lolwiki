@@ -72,9 +72,7 @@ ALTER TABLE goods_photo
 ALTER TABLE goods_photo
 	MODIFY COLUMN no INT NOT NULL AUTO_INCREMENT;
 
-alter table goods_photo rename photo;
 
-alter table photo change goods_no ref_no int;
 -- 상품
 ALTER TABLE goods
 	ADD CONSTRAINT FK_user_TO_goods -- 유저 -> 상품
@@ -89,11 +87,18 @@ ALTER TABLE goods MODIFY COLUMN reg_date DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 
 -- 상품사진
-ALTER TABLE goods_photo
-	ADD CONSTRAINT FK_goods_TO_goods_photo -- 상품 -> 상품사진
-	FOREIGN KEY (
-	goods_no -- 상품 번호
-	)
-	REFERENCES goods ( -- 상품
-	no -- 상품 번호
+CREATE TABLE user_photo (
+	no INT NOT NULL,
+	path VARCHAR(100) NULL,
+	user_no INT NOT NULL
+);
+
+-- 상품사진
+ALTER TABLE user_photo
+	ADD CONSTRAINT PK_goods_photo -- 상품사진 기본키
+	PRIMARY KEY (
+	no -- 사진 번호
 	);
+
+ALTER TABLE user_photo
+MODIFY COLUMN no INT NOT NULL AUTO_INCREMENT;
