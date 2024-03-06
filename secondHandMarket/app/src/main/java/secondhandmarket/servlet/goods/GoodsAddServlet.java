@@ -29,7 +29,7 @@ public class GoodsAddServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager")
+        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
         goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
         goodsPhotoDao = (GoodsPhotoDaoImpl) this.getServletContext().getAttribute("goodsPhotoDao");
         uploadDir = this.getServletContext().getRealPath("/upload/goods");
@@ -48,7 +48,7 @@ public class GoodsAddServlet extends HttpServlet {
                 resp.setHeader("Refresh", "1;url=/auth/login");
             }
             req.getRequestDispatcher("/header").include(req, resp);
-            out.println("<form action='/goods/add' method='post' enctpye='multipart/form-data'>");
+            out.println("<form action='/goods/add' method='post' enctype='multipart/form-data'>");
             out.println("<div>");
             out.println("상품 사진: <input multiple name='photos' type='file'>");
             out.println("</div>");
@@ -73,7 +73,7 @@ public class GoodsAddServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
-
+        req.getRequestDispatcher("/header").include(req, resp);
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             String name = req.getParameter("name");
@@ -86,28 +86,38 @@ public class GoodsAddServlet extends HttpServlet {
             goods.setPrice(price);
             goods.setSpec(spec);
             goods.setUserNo(loginUser.getNo());
+            txManager.startTransaction();
             goodsDao.add(goods);
 
-            Photo goodsPhoto = new Photo();
+
 
             Collection<Part> parts = req.getParts();
             for (Part part : parts) {
                 if (!part.getName().equals("photos") || part.getSize() == 0) {
                     continue;
                 } else {
+                    Photo goodsPhoto = new Photo();
                     String filename = UUID.randomUUID().toString();
                     part.write(this.uploadDir + "/" + filename);
                     goodsPhoto.setPath(filename);
+                    goodsPhoto.setRefNo(goods.getNo());
+                    goodsPhotoDao.add(goodsPhoto);
                 }
             }
+            txManager.commit();
 
 
-            req.getRequestDispatcher("/header").include(req, resp);
+
             out.println("<h2>상품 등록이 완료되었습니다.</h2>");
             resp.setHeader("Refresh", "1;url=/home");
             req.getRequestDispatcher("/footer").include(req, resp);
         } catch (Exception e) {
             System.out.println("GoodsAddServlet - Post 오류");
+            try {
+                txManager.rollback();
+            } catch (Exception ex) {
+                System.out.println("GoodsAddServlet - rollback 오류");
+            }
         }
     }
 

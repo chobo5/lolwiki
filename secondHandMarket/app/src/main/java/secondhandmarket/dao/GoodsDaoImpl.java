@@ -28,7 +28,7 @@ public class GoodsDaoImpl {
             ps.setInt(4, goods.getUserNo());
             ps.executeUpdate();
 
-            try (ResultSet keyRs = ps.getGeneratedKeys();) {
+            try (ResultSet keyRs = ps.getGeneratedKeys()) {
                 keyRs.next();
                 goods.setNo(keyRs.getInt(1));
             }

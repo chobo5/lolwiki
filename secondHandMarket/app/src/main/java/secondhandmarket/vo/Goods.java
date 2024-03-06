@@ -1,6 +1,7 @@
 package secondhandmarket.vo;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Goods {
     private int no;
@@ -9,6 +10,8 @@ public class Goods {
     private String spec;
     private int userNo;
     private Date regDate;
+
+    private List<Photo> photoList;
 
     public int getNo() {
         return no;
@@ -56,5 +59,13 @@ public class Goods {
 
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
+    }
+
+    public List<Photo> getPhotoList() {
+        return photoList;
+    }
+
+    public void setPhotoList(List<Photo> photoList) {
+        this.photoList = photoList;
     }
 }

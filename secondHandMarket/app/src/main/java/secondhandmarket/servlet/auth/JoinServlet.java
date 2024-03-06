@@ -23,14 +23,14 @@ import java.util.UUID;
 public class JoinServlet extends HttpServlet {
 
     private UserDaoImpl userDao;
-    private UserPhotoDaoImpl photoDao;
+    private UserPhotoDaoImpl userPhotoDao;
     private String uploadDir;
     private TransactionManager txManager;
 
     @Override
     public void init() throws ServletException {
         this.userDao = (UserDaoImpl) this.getServletContext().getAttribute("userDao");
-        this.photoDao = (UserPhotoDaoImpl) this.getServletContext().getAttribute("userPhotoDao");
+        this.userPhotoDao = (UserPhotoDaoImpl) this.getServletContext().getAttribute("userPhotoDao");
         uploadDir = this.getServletContext().getRealPath("/upload/user");
         txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
 
@@ -106,8 +106,7 @@ public class JoinServlet extends HttpServlet {
                 txManager.startTransaction();
                 userDao.add(user);
                 profilePhoto.setRefNo(user.getNo());
-                System.out.println(profilePhoto);
-                photoDao.add(profilePhoto);
+                userPhotoDao.add(profilePhoto);
                 txManager.commit();
 
             } catch (Exception e) {
