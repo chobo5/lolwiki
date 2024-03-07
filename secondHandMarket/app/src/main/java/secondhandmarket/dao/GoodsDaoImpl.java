@@ -40,7 +40,7 @@ public class GoodsDaoImpl {
 
     public List<Goods> findBy(String keyword) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "SELECT no" +
+            String sql = "SELECT no," +
                     " name," +
                     " price," +
                     " spec," +

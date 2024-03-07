@@ -1,7 +1,9 @@
 package secondhandmarket.servlet.goods;
 
 import secondhandmarket.dao.GoodsDaoImpl;
+import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.vo.Goods;
+import secondhandmarket.vo.Photo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,16 +12,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/goods/list")
 public class GoodsListServlet extends HttpServlet {
 
-    GoodsDaoImpl goodsDao;
+    private GoodsDaoImpl goodsDao;
+    private GoodsPhotoDaoImpl goodsPhotoDao;
+    private String uploadDir;
+
 
     @Override
     public void init() throws ServletException {
         goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
+        goodsPhotoDao = (GoodsPhotoDaoImpl) this.getServletContext().getAttribute("goodsPhotoDao");
+        uploadDir = this.getServletContext().getRealPath("/upload/goods");
     }
 
     @Override
@@ -29,6 +37,10 @@ public class GoodsListServlet extends HttpServlet {
         try {
             String keyword = req.getParameter("keyword");
             List<Goods> goodsList = goodsDao.findBy(keyword);
+            for (Goods goods : goodsList) {
+                goods.setPhotoList(goodsPhotoDao.findBy(goods.getNo()));
+            }
+
             if (goodsList.size() > 0) {
                 out.println("<table border='1'>");
                 out.println("<thead>");
@@ -37,6 +49,7 @@ public class GoodsListServlet extends HttpServlet {
                 out.println("<tbody>");
                 for (Goods goods : goodsList) {
                     out.println("<tr>");
+                    out.printf("<td><img src='%s'></td>\n", );
                     out.printf("<td>%s</td>\n", goods.getName());
                     out.printf("<td>%s</td>\n", goods.getPrice() + "원");
                     out.printf("<td>%s</td>\n", goods.getRegDate());
