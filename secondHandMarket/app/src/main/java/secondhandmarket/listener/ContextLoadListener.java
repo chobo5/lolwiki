@@ -34,9 +34,5 @@ public class ContextLoadListener implements ServletContextListener {
         context.setAttribute("goodsDao", goodsDao);
         context.setAttribute("userPhotoDao", userPhotoDao);
         context.setAttribute("goodsPhotoDao", goodsPhotoDao);
-
-
-
-
     }
 }

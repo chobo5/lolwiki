@@ -23,12 +23,6 @@ public class HomeServlet extends HttpServlet {
 
         out.println("<br>");
         out.println("<br>");
-        out.println("<form action='/goods/list'");
-        out.println("<div>");
-        out.println("<input name='keyword' type='text' placeholder='검색어를 입력해주세요'" );
-        out.println("</div>");
-        out.println("<button>검색</button>");
-        out.println("</form>");
         if (loginUser != null) {
             out.println("<div>");
             out.println("<a href='/goods/add'>1. 상품 등록하기</a>" );

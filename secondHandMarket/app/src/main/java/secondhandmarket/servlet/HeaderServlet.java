@@ -25,11 +25,17 @@ public class HeaderServlet extends HttpServlet {
         out.println("<!DOCTYPE html>");
         out.println("<html lang='en'>");
         out.println("<head>");
-        out.println("  <meta charset='UTF-8'>");
-        out.println("  <title>중고 장터</title>");
+        out.println("<meta charset='UTF-8'>");
+        out.println("<title>중고 장터</a></title>");
         out.println("</head>");
         out.println("<body>");
-        out.println("<h1>중고 장터</h1>");
+        out.println("<h1><a href='/home'>중고 장터</a></h1>");
+        out.println("<form action='/goods/list'");
+        out.println("<div>");
+        out.println("<input name='keyword' type='text' placeholder='검색어를 입력해주세요'>" );
+        out.println("</div>");
+        out.println("<button>검색</button>");
+        out.println("</form>");
         if (loginUser == null) {
             out.println("<a href='/auth/join'>회원가입</a>");
             out.println("<a href='/auth/login'>로그인</a>");

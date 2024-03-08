@@ -42,10 +42,12 @@ public class GoodsPhotoDaoImpl {
     }
 
     public List<Photo> findBy(int no) {
+
         try (Connection con = connectionPool.getConnection()) {
             String sql = "SELECT no," +
                     " path," +
                     " goods_no" +
+                    " FROM goods_photo" +
                     " WHERE goods_no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, no);
