@@ -66,4 +66,6 @@ public class GoodsPhotoDaoImpl {
         }
         return null;
     }
+
+
 }

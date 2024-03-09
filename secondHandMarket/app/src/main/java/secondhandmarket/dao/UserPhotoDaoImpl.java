@@ -5,6 +5,9 @@ import secondhandmarket.vo.Photo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserPhotoDaoImpl {
     DBConnectionPool connectionPool;
@@ -36,5 +39,29 @@ public class UserPhotoDaoImpl {
             System.out.println("UserPhotoDaoImpl - 사진 삭제 오류");
         }
         return -1;
+    }
+
+    public Photo findBy(int no) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "SELECT no," +
+                    " path," +
+                    " user_no" +
+                    " FROM user_photo" +
+                    " WHERE user_no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, no);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Photo photo = new Photo();
+                photo.setNo(rs.getInt("no"));
+                photo.setPath(rs.getString("path"));
+                photo.setRefNo(rs.getInt("goods_no"));
+                return  photo;
+            }
+
+        } catch (Exception e) {
+            System.out.println("UserPhotoDaoImpl - 사진 검색 오류");
+        }
+        return null;
     }
 }

@@ -99,4 +99,36 @@ public class GoodsDaoImpl {
         }
         return null;
     }
+
+    public List<Goods> findAll(int userNo) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "SELECT no," +
+                    " name," +
+                    " price," +
+                    " spec," +
+                    " user_no," +
+                    " reg_date" +
+                    " FROM goods" +
+                    " WHERE user_no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, userNo);
+            ResultSet rs = ps.executeQuery();
+            List<Goods> list = new ArrayList<>();
+            while (rs.next()) {
+                Goods goods = new Goods();
+                goods.setNo(rs.getInt("no"));
+                goods.setName(rs.getString("name"));
+                goods.setPrice(rs.getInt("price"));
+                goods.setSpec(rs.getString("spec"));
+                goods.setUserNo(rs.getInt("user_no"));
+                goods.setRegDate(rs.getDate("reg_date"));
+                list.add(goods);
+            }
+            return list;
+
+        } catch (Exception e) {
+            System.out.println("GoodsDaoImpl - 유저의 모든 상품 검색 오류");
+        }
+        return null;
+    }
 }

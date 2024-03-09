@@ -42,6 +42,7 @@ public class HeaderServlet extends HttpServlet {
         } else {
             out.printf("<span>%s</span>\n", nickname);
             out.println("<a href='/auth/logout'>로그아웃</a>");
+            out.println("<a href='/auth/mypage'>마이페이지</a>");
         }
 
 
