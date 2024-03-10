@@ -46,4 +46,15 @@ public class User {
     public void setPhoto(Photo photo) {
         this.photo = photo;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "no=" + no +
+                ", nickname='" + nickname + '\'' +
+                ", phoneNo='" + phoneNo + '\'' +
+                ", password='" + password + '\'' +
+                ", photo=" + photo +
+                '}';
+    }
 }

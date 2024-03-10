@@ -39,8 +39,7 @@ public class MypageServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
-        resp.setContentType("text/html;charse=UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
         req.getRequestDispatcher("/header").include(req, resp);
         try {
@@ -48,17 +47,40 @@ public class MypageServlet extends HttpServlet {
             if (loginUser == null) {
                 resp.sendRedirect("/home");
             }
-            Photo profilePhto = userPhotoDao.findBy(loginUser.getNo());
+            Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
+            if (userPhoto == null) {
+                Photo photo = new Photo();
+                photo.setPath("defaultUser.png");
+                loginUser.setPhoto(photo);
+            } else {
+                loginUser.setPhoto(userPhoto);
+            }
             List<Goods> goodsOfUser = goodsDao.findAll(loginUser.getNo());
             for (Goods goods : goodsOfUser) {
                 List<Photo> photoList = goodsPhotoDao.findBy(goods.getNo());
                 goods.setPhotoList(photoList);
             }
+            out.printf("<h3>%s</h3>\n", loginUser.getNickname());
+            out.printf("<img src='%s' width=250 height=250'>\n",  "/upload/user/" + loginUser.getPhoto().getPath());
+            out.printf("<h4>%s</h4>\n", loginUser.getPhoneNo());
+            out.println("<br>");
+            out.println("<br>");
+            out.printf("<h3>%s</h3>\n", "판매 상품");
+            for (Goods goods : goodsOfUser) {
+                out.printf("<p><a href='>%s</a></p>\n", goods.getName());
+                for (Photo photo : goods.getPhotoList()) {
+                    out.printf("<img src='%s' width=250 height=250'>\n", "/upload/goods/" + photo.getPath());
+                }
+                out.printf("<p>%s</p>\n", goods.getPrice());
+                out.printf("<p>%s</p>\n", goods.getSpec());
+                out.printf("<p>%s</p>\n", goods.getRegDate());
+                out.println("<p>--------------------------------------------------------</p>");
+            }
+            req.getRequestDispatcher("/footer").include(req, resp);
 
         } catch (Exception e) {
-            
+
         }
-        req.getRequestDispatcher("/footer").include(req, resp);
     }
 
     @Override

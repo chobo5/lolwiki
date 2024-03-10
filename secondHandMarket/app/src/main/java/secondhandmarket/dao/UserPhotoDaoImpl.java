@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserPhotoDaoImpl {
+public class    UserPhotoDaoImpl {
     DBConnectionPool connectionPool;
 
     public UserPhotoDaoImpl(DBConnectionPool connectionPool) {
@@ -55,7 +55,7 @@ public class UserPhotoDaoImpl {
                 Photo photo = new Photo();
                 photo.setNo(rs.getInt("no"));
                 photo.setPath(rs.getString("path"));
-                photo.setRefNo(rs.getInt("goods_no"));
+                photo.setRefNo(rs.getInt("user_no"));
                 return  photo;
             }
 

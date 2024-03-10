@@ -68,4 +68,17 @@ public class Goods {
     public void setPhotoList(List<Photo> photoList) {
         this.photoList = photoList;
     }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "no=" + no +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", spec='" + spec + '\'' +
+                ", userNo=" + userNo +
+                ", regDate=" + regDate +
+                ", photoList=" + photoList +
+                '}';
+    }
 }
