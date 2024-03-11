@@ -46,20 +46,32 @@ public class UserDaoImpl {
         return -1;
     }
 
-    public int update(User user) {
+    public int updateInfo(User user) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "UPDATE user SET nickname = ?," +
                     " phone_no = ?," +
-                    " password = ?," +
                     " where user_no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getNickname());
             ps.setString(2, user.getPhoneNo());
-            ps.setString(3, user.getPassword());
-            ps.setInt(4, user.getNo());
+            ps.setInt(3, user.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원 업데이트 오류");
+            System.out.println("UserDaoImpl - 회원정보 업데이트 오류");
+        }
+        return -1;
+    }
+    public int updatePassword(User user) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "UPDATE user SET" +
+                    " password = ?," +
+                    " where user_no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, user.getPassword());
+            ps.setInt(2, user.getNo());
+            return ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("UserDaoImpl - 회원 비밀번호 업데이트 오류");
         }
         return -1;
     }

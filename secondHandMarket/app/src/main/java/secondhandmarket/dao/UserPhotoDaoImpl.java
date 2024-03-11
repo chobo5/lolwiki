@@ -41,7 +41,8 @@ public class    UserPhotoDaoImpl {
         return -1;
     }
 
-    public Photo findBy(int no) {
+
+    public Photo findBy(int userNo) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "SELECT no," +
                     " path," +
@@ -49,7 +50,7 @@ public class    UserPhotoDaoImpl {
                     " FROM user_photo" +
                     " WHERE user_no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, no);
+            ps.setInt(1, userNo);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Photo photo = new Photo();
@@ -63,5 +64,19 @@ public class    UserPhotoDaoImpl {
             System.out.println("UserPhotoDaoImpl - 사진 검색 오류");
         }
         return null;
+    }
+
+    public int update(Photo photo) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "UPDATE user_photo set path = ?" +
+                    " WHERE no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, photo.getPath());
+            ps.setInt(2, photo.getNo());
+            return ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("UserPhotoDaoImpl - 사진 업데이트 오류");
+        }
+        return -1;
     }
 }
