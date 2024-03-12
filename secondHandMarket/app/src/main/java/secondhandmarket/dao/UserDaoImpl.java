@@ -49,8 +49,8 @@ public class UserDaoImpl {
     public int updateInfo(User user) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "UPDATE user SET nickname = ?," +
-                    " phone_no = ?," +
-                    " where user_no = ?";
+                    " phone_no = ?" +
+                    " where no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getNickname());
             ps.setString(2, user.getPhoneNo());
@@ -64,8 +64,8 @@ public class UserDaoImpl {
     public int updatePassword(User user) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "UPDATE user SET" +
-                    " password = ?," +
-                    " where user_no = ?";
+                    " password = ?" +
+                    " where no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getPassword());
             ps.setInt(2, user.getNo());

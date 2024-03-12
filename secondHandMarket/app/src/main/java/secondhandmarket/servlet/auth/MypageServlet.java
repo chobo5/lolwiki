@@ -78,6 +78,7 @@ public class MypageServlet extends HttpServlet {
             out.println("</div>");
             out.println("<button>변경</button>");
             out.println("</form>");
+            out.println("<a href='/auth/changepw'>비밀번호 변경</a>");
             out.println("<br>");
             out.println("<br>");
             out.printf("<h3>%s</h3>\n", "판매 상품");
@@ -125,9 +126,9 @@ public class MypageServlet extends HttpServlet {
             loginUser.setPhoto(profilePhoto);
             userDao.updateInfo(loginUser);
             userPhotoDao.update(profilePhoto);
-
+            resp.sendRedirect("/auth/mypage");
         } catch (Exception e) {
-            req.getRequestDispatcher("/error").forward(req, resp);
+//            req.getRequestDispatcher("/error").forward(req, resp);
         }
 
         req.getRequestDispatcher("/footer").include(req, resp);
