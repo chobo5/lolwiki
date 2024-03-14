@@ -30,7 +30,7 @@ public class UserDaoImpl {
             }
 
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원 추가 오류");
+            throw new DaoException("UserDaoImpl - 회원 추가 오류");
         }
     }
 
@@ -41,9 +41,9 @@ public class UserDaoImpl {
             ps.setInt(1, no);
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원 삭제 오류");
+            throw new DaoException("UserDaoImpl - 회원 삭제 오류");
         }
-        return -1;
+
     }
 
     public int updateInfo(User user) {
@@ -57,9 +57,8 @@ public class UserDaoImpl {
             ps.setInt(3, user.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원정보 업데이트 오류");
+            throw new DaoException("UserDaoImpl - 회원정보 업데이트 오류");
         }
-        return -1;
     }
     public int updatePassword(User user) {
         try (Connection con = connectionPool.getConnection()) {
@@ -71,9 +70,9 @@ public class UserDaoImpl {
             ps.setInt(2, user.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원 비밀번호 업데이트 오류");
+            throw new DaoException("UserDaoImpl - 회원 비밀번호 업데이트 오류");
         }
-        return -1;
+
     }
 
     public User findBy(String nickname) {
@@ -93,11 +92,10 @@ public class UserDaoImpl {
                 user.setPhoneNo(rs.getString("phone_no"));
                 return user;
             }
-
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 회원 검색 오류");
+            throw new DaoException("UserDaoImpl - 회원 검색 오류");
         }
-        return null;
+
     }
 
     public User findByNicknameAndPassword(String nickname, String password) {
@@ -121,9 +119,8 @@ public class UserDaoImpl {
             }
 
         } catch (Exception e) {
-            System.out.println("UserDaoImpl - 닉네임,패스워드로 회원 찾기 오류");
+            throw new DaoException("UserDaoImpl - 닉네임,패스워드로 회원 찾기 오류");
         }
-        return null;
     }
 }
 

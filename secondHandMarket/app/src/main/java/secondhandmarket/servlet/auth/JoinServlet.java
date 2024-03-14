@@ -74,54 +74,60 @@ public class JoinServlet extends HttpServlet {
         String password1 = req.getParameter("password1");
         String password2 = req.getParameter("password2");
 
-        Photo profilePhoto = new Photo();
 
-        Collection<Part> parts = req.getParts();
-        for (Part part : parts) {
-            if (!part.getName().equals("photo") || part.getSize() == 0) {
-                continue;
-            } else {
-                String filename = UUID.randomUUID().toString();
-                part.write(this.uploadDir + "/" + filename);
-                profilePhoto.setPath(filename);
-            }
-        }
-
-        req.getRequestDispatcher("/header").include(req, resp);
-
-
-        if (!password1.equals(password2)) {
-            out.println("<h2>비밀번호가 일치하지 않습니다.</h2>");
-            resp.setHeader("Refresh", "1;url=/auth/join");
-        } else if (userDao.findBy(nickName) != null) {
-            out.println("<h2>이미 존재하는 닉네임 입니다.</h2>");
-            resp.setHeader("Refresh", "1;url=/auth/join");
-        } else {
-            out.println("<h2>가입이 완료되었습니다.</h2>");
-            User user = new User();
-            user.setNickname(nickName);
-            user.setPhoneNo(phoneNo);
-            user.setPassword(password1);
-            try {
-                txManager.startTransaction();
-                userDao.add(user);
-                profilePhoto.setRefNo(user.getNo());
-                userPhotoDao.add(profilePhoto);
-                txManager.commit();
-
-            } catch (Exception e) {
-                try {
-                    txManager.rollback();
-                } catch (Exception ex) {
+        try {
+            Photo profilePhoto = new Photo();
+            Collection<Part> parts = req.getParts();
+            for (Part part : parts) {
+                if (!part.getName().equals("photo") || part.getSize() == 0) {
+                    continue;
+                } else {
+                    String filename = UUID.randomUUID().toString();
+                    part.write(this.uploadDir + "/" + filename);
+                    profilePhoto.setPath(filename);
                 }
-                throw new RuntimeException(e);
+            }
+            if (profilePhoto.getPath() == null) {
+
             }
 
+            req.getRequestDispatcher("/header").include(req, resp);
+
+
+            if (!password1.equals(password2)) {
+                out.println("<h2>비밀번호가 일치하지 않습니다.</h2>");
+                resp.setHeader("Refresh", "1;url=/auth/join");
+            } else if (userDao.findBy(nickName) != null) {
+                out.println("<h2>이미 존재하는 닉네임 입니다.</h2>");
+                resp.setHeader("Refresh", "1;url=/auth/join");
+            } else {
+                out.println("<h2>가입이 완료되었습니다.</h2>");
+                User user = new User();
+                user.setNickname(nickName);
+                user.setPhoneNo(phoneNo);
+                user.setPassword(password1);
+                try {
+                    txManager.startTransaction();
+                    userDao.add(user);
+                    profilePhoto.setRefNo(user.getNo());
+                    userPhotoDao.add(profilePhoto);
+                    txManager.commit();
+
+                } catch (Exception e) {
+                    try {
+                        txManager.rollback();
+                    } catch (Exception ex) {
+                    }
+                    throw new RuntimeException(e);
+                }
+
+            }
+            req.getRequestDispatcher("/footer").include(req, resp);
+
+            resp.setHeader("Refresh", "1;url=/home");
+        } catch (Exception e) {
+
         }
-        req.getRequestDispatcher("/footer").include(req, resp);
-
-        resp.setHeader("Refresh", "1;url=/home");
-
 
 
     }

@@ -110,6 +110,10 @@ public class MypageServlet extends HttpServlet {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
 
             Photo profilePhoto = userPhotoDao.findBy(loginUser.getNo());
+            if (profilePhoto == null) {
+                Photo newPhoto = new Photo();
+                newPhoto.setRefNo(loginUser.getNo());
+            }
 
             Collection<Part> parts = req.getParts();
             for (Part part : parts) {
@@ -125,6 +129,11 @@ public class MypageServlet extends HttpServlet {
             loginUser.setPhoneNo(phoneNo);
             loginUser.setPhoto(profilePhoto);
             userDao.updateInfo(loginUser);
+            if (userPhotoDao.findBy(loginUser.getNo()) == null) {
+                userPhotoDao.add(profilePhoto);
+            } else {
+                userPhotoDao.update(profilePhoto);
+            }
             userPhotoDao.update(profilePhoto);
             resp.sendRedirect("/auth/mypage");
         } catch (Exception e) {
