@@ -110,9 +110,12 @@ public class MypageServlet extends HttpServlet {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
 
             Photo profilePhoto = userPhotoDao.findBy(loginUser.getNo());
+            boolean nullFlag = false;
+
             if (profilePhoto == null) {
-                Photo newPhoto = new Photo();
-                newPhoto.setRefNo(loginUser.getNo());
+                nullFlag = true;
+                profilePhoto = new Photo();
+                profilePhoto.setRefNo(loginUser.getNo());
             }
 
             Collection<Part> parts = req.getParts();
@@ -129,7 +132,7 @@ public class MypageServlet extends HttpServlet {
             loginUser.setPhoneNo(phoneNo);
             loginUser.setPhoto(profilePhoto);
             userDao.updateInfo(loginUser);
-            if (userPhotoDao.findBy(loginUser.getNo()) == null) {
+            if (nullFlag) {
                 userPhotoDao.add(profilePhoto);
             } else {
                 userPhotoDao.update(profilePhoto);
@@ -137,7 +140,9 @@ public class MypageServlet extends HttpServlet {
             userPhotoDao.update(profilePhoto);
             resp.sendRedirect("/auth/mypage");
         } catch (Exception e) {
-//            req.getRequestDispatcher("/error").forward(req, resp);
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error").forward(req, resp);
+            e.printStackTrace();
         }
 
         req.getRequestDispatcher("/footer").include(req, resp);

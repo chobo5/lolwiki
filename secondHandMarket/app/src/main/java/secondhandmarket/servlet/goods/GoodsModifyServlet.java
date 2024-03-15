@@ -16,8 +16,8 @@ import java.io.PrintWriter;
 import java.util.List;
 
 @MultipartConfig(maxFileSize = 1024 * 1024 * 2)
-@WebServlet("/goods/view")
-public class GoodsViewServlet extends HttpServlet {
+@WebServlet("/goods/modify")
+public class GoodsModifyServlet extends HttpServlet {
 
     private GoodsDaoImpl goodsDao;
     private GoodsPhotoDaoImpl goodsPhotoDao;
@@ -41,20 +41,22 @@ public class GoodsViewServlet extends HttpServlet {
         for (Photo goodsPhoto : goodsPhotos) {
             out.printf("<img src='/upload/goods/%s' width=250 height=250>\n", goodsPhoto.getPath());
         }
+        out.println("<form action='/goods/modify' method='post' enctype='multipart/form-data'>");
         out.println("<div>");
-
         out.println("<h3>상품명</h3>");
-        out.printf("<p>%s</p>\n", goods.getName());
-        out.println("<br>");
-        out.println("<h3>가격</h3>");
-        out.printf("<p>%s</p>\n", goods.getPrice());
-        out.println("<br>");
-        out.println("<h3>설명</h3>");
-        out.printf("<p>%s</p>\n", goods.getSpec());
-        out.println("<br>");
-        out.println("<h3>등록일</h3>");
-        out.printf("<p>%s</p>\n", goods.getRegDate());
+        out.printf("<input name='name' value='%s'>\n", goods.getName());
         out.println("</div>");
+        out.println("<div>");
+        out.println("<h3>가격</h3>");
+        out.printf("<input name='price' value='%s'>\n", goods.getPrice());
+        out.println("</div>");
+        out.println("<div>");
+        out.println("<h3>설명</h3>");
+        out.printf("<input name='spec' value='%s'>\n", goods.getSpec());
+        out.println("</div>");
+        out.println("<button>변경</button>");
+        out.println("</form>");
+        out.println("<a href='/goods/delete'>삭제</a>");
 
 
 

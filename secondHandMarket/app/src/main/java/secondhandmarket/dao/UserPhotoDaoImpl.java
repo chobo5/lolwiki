@@ -25,7 +25,7 @@ public class    UserPhotoDaoImpl {
             ps.setInt(2, photo.getRefNo());
             ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserPhotoDaoImpl - 사진 추가 오류");
+            new DaoException("UserPhotoDaoImpl - 사진 추가 오류");
         }
     }
 
@@ -36,9 +36,9 @@ public class    UserPhotoDaoImpl {
             ps.setInt(1, no);
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserPhotoDaoImpl - 사진 삭제 오류");
+            throw new DaoException("UserPhotoDaoImpl - 사진 삭제 오류");
         }
-        return -1;
+
     }
 
 
@@ -59,11 +59,10 @@ public class    UserPhotoDaoImpl {
                 photo.setRefNo(rs.getInt("user_no"));
                 return  photo;
             }
-
+            return null;
         } catch (Exception e) {
-            System.out.println("UserPhotoDaoImpl - 사진 검색 오류");
+            throw new DaoException("UserPhotoDaoImpl - 사진 검색 오류");
         }
-        return null;
     }
 
     public int update(Photo photo) {
@@ -75,8 +74,7 @@ public class    UserPhotoDaoImpl {
             ps.setInt(2, photo.getNo());
             return ps.executeUpdate();
         } catch (Exception e) {
-            System.out.println("UserPhotoDaoImpl - 사진 업데이트 오류");
+            throw new DaoException("UserPhotoDaoImpl - 사진 업데이트 오류");
         }
-        return -1;
     }
 }

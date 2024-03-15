@@ -63,7 +63,7 @@ public class UserDaoImpl {
     public int updatePassword(User user) {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "UPDATE user SET" +
-                    " password = ?" +
+                    " password = sha2(?, 256)" +
                     " where no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getPassword());
@@ -92,10 +92,10 @@ public class UserDaoImpl {
                 user.setPhoneNo(rs.getString("phone_no"));
                 return user;
             }
+            return null;
         } catch (Exception e) {
             throw new DaoException("UserDaoImpl - 회원 검색 오류");
         }
-
     }
 
     public User findByNicknameAndPassword(String nickname, String password) {
@@ -117,7 +117,7 @@ public class UserDaoImpl {
                 user.setPhoneNo(rs.getString("phone_no"));
                 return user;
             }
-
+        return null;
         } catch (Exception e) {
             throw new DaoException("UserDaoImpl - 닉네임,패스워드로 회원 찾기 오류");
         }
