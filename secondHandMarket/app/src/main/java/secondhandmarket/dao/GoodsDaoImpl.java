@@ -131,4 +131,23 @@ public class GoodsDaoImpl {
         }
         return null;
     }
+
+    public int update(Goods goods) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "UPDATE FROM goods SET" +
+                    " name = ?," +
+                    " price = ?," +
+                    " spec = ?," +
+                    " WHERE no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, goods.getName());
+            ps.setInt(2, goods.getPrice());
+            ps.setString(3, goods.getSpec());
+            ps.setInt(4, goods.getNo());
+            return ps.executeUpdate();
+
+        } catch (Exception e) {
+            throw new DaoException("GoodsDaoImpl - 상품 추가 오류");
+        }
+    }
 }

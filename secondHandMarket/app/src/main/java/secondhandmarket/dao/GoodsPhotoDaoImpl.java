@@ -41,6 +41,18 @@ public class GoodsPhotoDaoImpl {
         return -1;
     }
 
+    public int deleteAll(int no) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "DELETE FROM goods_photo WHERE goods_no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, no);
+            return ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("GoodsPhotoDaoImpl - 사진 삭제 오류");
+        }
+        return -1;
+    }
+
     public List<Photo> findBy(int no) {
 
         try (Connection con = connectionPool.getConnection()) {
