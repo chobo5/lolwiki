@@ -24,7 +24,6 @@ public class GoodsListServlet extends HttpServlet {
     private GoodsPhotoDaoImpl goodsPhotoDao;
     private String uploadDir;
 
-
     @Override
     public void init() throws ServletException {
         goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
@@ -42,30 +41,13 @@ public class GoodsListServlet extends HttpServlet {
             for (Goods goods : goodsList) {
                 goods.setPhotoList(goodsPhotoDao.findBy(goods.getNo()));
             }
-            req.getRequestDispatcher("/header").include(req, resp);
-            if (goodsList.size() > 0) {
-                out.println("<table border='1'>");
-                out.println("<thead>");
-                out.println("<tr> <th>사진</th> <th>상품명</th> <th>가격</th> <th>등록일</th> </tr>");
-                out.println("</thead>");
-                out.println("<tbody>");
-                for (Goods goods : goodsList) {
-                    out.println("<tr>");
-                    out.printf("<td><img src='/upload/goods/%s' width=150 height=150></td>\n" , goods.getPhotoList().get(0).getPath());
-                    out.printf("<td><a href='/goods/view?no=%s'>%s</a></td>\n", goods.getNo() ,goods.getName());
-                    out.printf("<td>%s</td>\n", goods.getPrice() + "원");
-                    out.printf("<td>%s</td>\n", goods.getRegDate());
-                    out.println("</tr>");
-                }
-                out.println("</tbody>");
-                out.println("</table>");
-                req.getRequestDispatcher("/footer").include(req,resp);
-            } else {
-                out.println("<h2>등록된 삼품이 없습니다.</h2>");
-                req.getRequestDispatcher("/footer").include(req,resp);
-            }
-        } catch (Exception e) {
+            req.setAttribute("goodsList", goodsList);
+            req.getRequestDispatcher("/goods/list.jsp").forward(req, resp);
 
+        } catch (Exception e) {
+            req.setAttribute("message", "검색 목록 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
     }
 }

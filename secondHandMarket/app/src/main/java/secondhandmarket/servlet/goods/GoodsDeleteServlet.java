@@ -2,7 +2,6 @@ package secondhandmarket.servlet.goods;
 
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
-import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.util.TransactionManager;
 import secondhandmarket.vo.User;
 
