@@ -79,9 +79,9 @@ public class UserDaoImpl {
         try (Connection con = connectionPool.getConnection()) {
             String sql = "SELECT no," +
                     " nickname," +
-                    " phone_no," +
-                    " from user" +
-                    " where nickname like ?";
+                    " phone_no" +
+                    " FROM user" +
+                    " WHERE nickname like ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, "%" + nickname + "%");
             ResultSet rs = ps.executeQuery();
