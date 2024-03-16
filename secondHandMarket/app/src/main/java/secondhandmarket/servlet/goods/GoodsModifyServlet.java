@@ -37,17 +37,28 @@ public class GoodsModifyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
+        User loginUser = (User) req.getSession().getAttribute("loginUser");
+        if (loginUser == null) {
+            resp.sendRedirect("/auth/login");
+        }
         int no = Integer.parseInt(req.getParameter("no"));
         List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);
         Goods goods = goodsDao.findBy(no);
         req.getRequestDispatcher("/header").include(req, resp);
-        User loginUser = (User) req.getSession().getAttribute("loginUser");
-        for (Photo goodsPhoto : goodsPhotos) {
-            out.printf("<img src='/upload/goods/%s' width=250 height=250>\n", goodsPhoto.getPath());
-        }
+
+
         out.println("<form action='/goods/modify' method='post' enctype='multipart/form-data'>");
         out.println("<div>");
-        out.println("<input multiple name='photos type='file'>");
+        out.printf("<input name='no' value='%s' type='hidden'>\n", goods.getNo());
+        out.println("</div>");
+        for (Photo goodsPhoto : goodsPhotos) {
+            out.println("<div>");
+            out.printf("<img src='/upload/goods/%s' width=250 height=250>\n", goodsPhoto.getPath());
+            out.printf("<a href='/goods/delete/photo?no=%s'>[삭제]</a>\n", goodsPhoto.getNo());
+            out.println("</div>");
+        }
+        out.println("<div>");
+        out.println("사진 추가: <input multiple name='photos' type='file'>");
         out.println("</div>");
         out.println("<div>");
         out.println("<h3>상품명</h3>");
@@ -61,11 +72,15 @@ public class GoodsModifyServlet extends HttpServlet {
         out.println("<h3>설명</h3>");
         out.printf("<input name='spec' value='%s'>\n", goods.getSpec());
         out.println("</div>");
+        out.println("<div>");
+        out.println("<h3>등록일</h3>");
+        out.printf("<input readonly type='text' value='%s'>\n", goods.getRegDate());
+        out.println("</div>");
         out.println("<button>변경</button>");
         out.println("</form>");
 
         out.println("<form action='/goods/delete' method='post'>");
-        out.printf("<input name='no' value='%s' type='hidden'>\n", loginUser.getNo());
+        out.printf("<input name='no' value='%s' type='hidden'>\n", goods.getNo());
         out.println("<button>삭제</button>");
         out.println("</form>");
 
@@ -82,10 +97,13 @@ public class GoodsModifyServlet extends HttpServlet {
                 out.println("<h2>로그인이 필요합니다.</h2>");
                 resp.setHeader("Refresh", "1;url=/auth/login");
             }
-            String name = req.getParameter("name");
-            int price = Integer.parseInt(req.getParameter("price"));
-            String spec = req.getParameter("spec");
+            Goods goods = new Goods();
+            goods.setNo(Integer.parseInt(req.getParameter("no")));
+            goods.setName(req.getParameter("name"));
+            goods.setPrice(Integer.parseInt(req.getParameter("price")));
+            goods.setSpec(req.getParameter("spec"));
 
+            goodsDao.update(goods);
             Collection<Part> parts = req.getParts();
             for (Part part : parts) {
                 if (!part.getName().equals("photos") || part.getSize() == 0) {
@@ -99,7 +117,8 @@ public class GoodsModifyServlet extends HttpServlet {
                     goodsPhotoDao.add(goodsPhoto);
                 }
             }
-            goodsDao
+            out.println("<h3>상품 정보 변경이 완료되었습니다.</h3>");
+            resp.setHeader("Refresh", "1;url=/auth/mypage");
 
         } catch (Exception e) {
 

@@ -134,10 +134,10 @@ public class GoodsDaoImpl {
 
     public int update(Goods goods) {
         try (Connection con = connectionPool.getConnection()) {
-            String sql = "UPDATE FROM goods SET" +
+            String sql = "UPDATE goods SET" +
                     " name = ?," +
                     " price = ?," +
-                    " spec = ?," +
+                    " spec = ?" +
                     " WHERE no = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, goods.getName());
@@ -148,6 +148,17 @@ public class GoodsDaoImpl {
 
         } catch (Exception e) {
             throw new DaoException("GoodsDaoImpl - 상품 추가 오류");
+        }
+    }
+
+    public int delete(int no) {
+        try (Connection con = connectionPool.getConnection()) {
+            String sql = "DELETE FROM goods WHERE no = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, no);
+            return ps.executeUpdate();
+        } catch (Exception e) {
+            throw new DaoException("GoodsDaoImpl- 상품 삭제 오류");
         }
     }
 }

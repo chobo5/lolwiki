@@ -83,7 +83,7 @@ public class MypageServlet extends HttpServlet {
             out.println("<br>");
             out.printf("<h3>%s</h3>\n", "판매 상품");
             for (Goods goods : goodsOfUser) {
-                out.printf("<p><a href=''>%s</a></p>\n", goods.getName());
+                out.printf("<p><a href='/goods/modify?no=%s'>%s</a></p>\n",goods.getNo(), goods.getName());
                 for (Photo photo : goods.getPhotoList()) {
                     out.printf("<img src='%s' width=250 height=250'>\n", "/upload/goods/" + photo.getPath());
                 }

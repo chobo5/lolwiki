@@ -3,6 +3,7 @@ package secondhandmarket.servlet.goods;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
+import secondhandmarket.util.TransactionManager;
 import secondhandmarket.vo.User;
 
 import javax.servlet.ServletException;
@@ -17,11 +18,13 @@ import java.io.PrintWriter;
 public class GoodsDeleteServlet extends HttpServlet {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;
+    TransactionManager txManager;
 
     @Override
     public void init() throws ServletException {
         goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
         goodsPhotoDao = (GoodsPhotoDaoImpl) this.getServletContext().getAttribute("goodsPhotoDao");
+        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,9 +36,18 @@ public class GoodsDeleteServlet extends HttpServlet {
                 out.println("<h2>로그인이 필요합니다.</h2>");
                 resp.setHeader("Refresh", "1;url=/auth/login");
             }
-
+            txManager.startTransaction();
+            int goodsNo = Integer.parseInt(req.getParameter("no"));
+            goodsPhotoDao.deleteAll(goodsNo);
+            goodsDao.delete(goodsNo);
+            txManager.commit();
+            out.println("<h3>상품 삭제가 완료되었습니다.</h3>");
+            resp.setHeader("Refresh", "1;url=/auth/mypage");
         } catch (Exception e) {
-
+            try {
+                txManager.rollback();
+            } catch (Exception ex) {
+            }
         }
     }
 
