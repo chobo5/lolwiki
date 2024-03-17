@@ -37,49 +37,25 @@ public class GoodsAddServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                req.getRequestDispatcher("/header").include(req, resp);
-                out.println("로그인이 필요합니다.");
-                req.getRequestDispatcher("/footer").include(req, resp);
-                resp.setHeader("Refresh", "1;url=/auth/login");
+                resp.sendRedirect("/auth/login");
+                return;
             }
-            req.getRequestDispatcher("/header").include(req, resp);
-            out.println("<form action='/goods/add' method='post' enctype='multipart/form-data'>");
-            out.println("<div>");
-            out.println("상품 사진: <input multiple name='photos' type='file'>");
-            out.println("</div>");
-            out.println("<div>");
-            out.println("상품 이름: <input name='name' type='text'>");
-            out.println("</div>");
-            out.println("<div>");
-            out.println("상품 가격: <input name='price' type='text'>");
-            out.println("</div>");
-            out.println("<div>");
-            out.println("상품 설명: <input name='spec' type='textarea'>");
-            out.println("</div>");
-            out.println("<button>등록</button>");
-            out.println("</form>");
-            req.getRequestDispatcher("/footer").include(req, resp);
+            req.getRequestDispatcher("/goods/add.jsp").forward(req, resp);
         } catch (Exception e) {
-            System.out.println("GoodsAddServlet get 오류");
+            req.setAttribute("message", "GoodsAddServlet get 오류");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-        req.getRequestDispatcher("/header").include(req, resp);
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             String name = req.getParameter("name");
             int price = Integer.parseInt(req.getParameter("price"));
             String spec = req.getParameter("spec");
-
 
             Goods goods = new Goods();
             goods.setName(name);
@@ -88,8 +64,6 @@ public class GoodsAddServlet extends HttpServlet {
             goods.setUserNo(loginUser.getNo());
             txManager.startTransaction();
             goodsDao.add(goods);
-
-
 
             Collection<Part> parts = req.getParts();
             for (Part part : parts) {

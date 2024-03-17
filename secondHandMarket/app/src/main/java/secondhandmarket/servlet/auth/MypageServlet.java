@@ -42,13 +42,11 @@ public class MypageServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-        req.getRequestDispatcher("/header").include(req, resp);
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
                 resp.sendRedirect("/home");
+                return;
             }
             Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
             if (userPhoto == null) {
@@ -58,52 +56,24 @@ public class MypageServlet extends HttpServlet {
             } else {
                 loginUser.setPhoto(userPhoto);
             }
+            req.setAttribute("userPhoto", userPhoto);
             List<Goods> goodsOfUser = goodsDao.findAll(loginUser.getNo());
             for (Goods goods : goodsOfUser) {
                 List<Photo> photoList = goodsPhotoDao.findBy(goods.getNo());
                 goods.setPhotoList(photoList);
             }
-            out.println("<form action='/auth/mypage' method='post' enctype='multipart/form-data'>");
-            out.println("<div>");
-            out.printf("<img src='%s' width=250 height=250'>\n",  "/upload/user/" + loginUser.getPhoto().getPath());
-            out.println("</div>");
-            out.println("<div>");
-            out.println("프로필사진: <input name='photo' type='file'>");
-            out.println("</div>");
-            out.println("<div>");
-            out.printf("닉네임: <input name='nickname' type='text' value='%s'>\n", loginUser.getNickname());
-            out.println("</div>");
-            out.println("<div>");
-            out.printf("연락처: <input name='phoneNo' type='text' value='%s'>\n", loginUser.getPhoneNo());
-            out.println("</div>");
-            out.println("<button>변경</button>");
-            out.println("</form>");
-            out.println("<a href='/auth/changepw'>비밀번호 변경</a>");
-            out.println("<br>");
-            out.println("<br>");
-            out.printf("<h3>%s</h3>\n", "판매 상품");
-            for (Goods goods : goodsOfUser) {
-                out.printf("<p><a href='/goods/modify?no=%s'>%s</a></p>\n",goods.getNo(), goods.getName());
-                for (Photo photo : goods.getPhotoList()) {
-                    out.printf("<img src='%s' width=250 height=250'>\n", "/upload/goods/" + photo.getPath());
-                }
-                out.printf("<p>%s</p>\n", goods.getPrice());
-                out.printf("<p>%s</p>\n", goods.getSpec());
-                out.printf("<p>%s</p>\n", goods.getRegDate());
-                out.println("<p>--------------------------------------------------------</p>");
-            }
-            req.getRequestDispatcher("/footer").include(req, resp);
+            req.setAttribute("goodsOfUser", goodsOfUser);
+            req.getRequestDispatcher("/auth/mypage.jsp").forward(req, resp);
 
         } catch (Exception e) {
-
+            req.setAttribute("message", "마이페이지 불러오기 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-        req.getRequestDispatcher("/header").include(req, resp);
         try {
             String nickname = req.getParameter("nickname");
             String phoneNo = req.getParameter("phoneNo");
@@ -140,14 +110,9 @@ public class MypageServlet extends HttpServlet {
             userPhotoDao.update(profilePhoto);
             resp.sendRedirect("/auth/mypage");
         } catch (Exception e) {
+            req.setAttribute("message", "마이페이지 회원정보 변경 오류");
             req.setAttribute("exception", e);
             req.getRequestDispatcher("/error").forward(req, resp);
-            e.printStackTrace();
         }
-
-        req.getRequestDispatcher("/footer").include(req, resp);
-
     }
-
-
 }
