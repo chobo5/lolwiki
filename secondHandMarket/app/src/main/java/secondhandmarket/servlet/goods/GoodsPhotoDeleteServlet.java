@@ -24,7 +24,9 @@ public class GoodsPhotoDeleteServlet extends HttpServlet {
             goodsPhotoDao.delete(no);
             resp.sendRedirect(req.getHeader("Referer"));
         } catch (Exception e) {
-
+            req.setAttribute("message", "상품 사진 삭제 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
 
     }

@@ -31,35 +31,17 @@ public class GoodsViewServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-        int no = Integer.parseInt(req.getParameter("no"));
-        List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);
-        Goods goods = goodsDao.findBy(no);
-        req.getRequestDispatcher("/header").include(req, resp);
-
-        for (Photo goodsPhoto : goodsPhotos) {
-            out.printf("<img src='/upload/goods/%s' width=250 height=250>\n", goodsPhoto.getPath());
+        try {
+            int no = Integer.parseInt(req.getParameter("no"));
+            List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);
+            Goods goods = goodsDao.findBy(no);
+            req.setAttribute("goodsPhotos", goodsPhotos);
+            req.setAttribute("goods", goods);
+            req.getRequestDispatcher("/goods/view.jsp").forward(req, resp);
+        } catch (Exception e) {
+            req.setAttribute("message", "상품 상세 불러오기 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
-        out.println("<div>");
-
-        out.println("<h3>상품명</h3>");
-        out.printf("<p>%s</p>\n", goods.getName());
-        out.println("<br>");
-        out.println("<h3>가격</h3>");
-        out.printf("<p>%s</p>\n", goods.getPrice());
-        out.println("<br>");
-        out.println("<h3>설명</h3>");
-        out.printf("<p>%s</p>\n", goods.getSpec());
-        out.println("<br>");
-        out.println("<h3>등록일</h3>");
-        out.printf("<p>%s</p>\n", goods.getRegDate());
-        out.println("</div>");
-
-
-
-        req.getRequestDispatcher("/footer").include(req, resp);
     }
-
-
 }

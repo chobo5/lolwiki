@@ -27,22 +27,22 @@ public class GoodsDeleteServlet extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                out.println("<h2>로그인이 필요합니다.</h2>");
-                resp.setHeader("Refresh", "1;url=/auth/login");
+                resp.sendRedirect("/auth/login");
+                return;
             }
             txManager.startTransaction();
             int goodsNo = Integer.parseInt(req.getParameter("no"));
             goodsPhotoDao.deleteAll(goodsNo);
             goodsDao.delete(goodsNo);
             txManager.commit();
-            out.println("<h3>상품 삭제가 완료되었습니다.</h3>");
-            resp.setHeader("Refresh", "1;url=/auth/mypage");
+            resp.sendRedirect("/auth/mypage");
         } catch (Exception e) {
+            req.setAttribute("message", "상품 삭제 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
             try {
                 txManager.rollback();
             } catch (Exception ex) {

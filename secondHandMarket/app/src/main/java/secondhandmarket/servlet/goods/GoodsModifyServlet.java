@@ -35,67 +35,32 @@ public class GoodsModifyServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
-        User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (loginUser == null) {
-            resp.sendRedirect("/auth/login");
+        try {
+            User loginUser = (User) req.getSession().getAttribute("loginUser");
+            if (loginUser == null) {
+                resp.sendRedirect("/auth/login");
+                return;
+            }
+            int no = Integer.parseInt(req.getParameter("no"));
+            List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);
+            Goods goods = goodsDao.findBy(no);
+            req.setAttribute("goodsPhotos", goodsPhotos);
+            req.setAttribute("goods", goods);
+            req.getRequestDispatcher("/goods/modify.jsp").forward(req, resp);
+        } catch (Exception e) {
+            req.setAttribute("message", "상품 수정 불러오기 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
-        int no = Integer.parseInt(req.getParameter("no"));
-        List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);
-        Goods goods = goodsDao.findBy(no);
-        req.getRequestDispatcher("/header").include(req, resp);
-
-
-        out.println("<form action='/goods/modify' method='post' enctype='multipart/form-data'>");
-        out.println("<div>");
-        out.printf("<input name='no' value='%s' type='hidden'>\n", goods.getNo());
-        out.println("</div>");
-        for (Photo goodsPhoto : goodsPhotos) {
-            out.println("<div>");
-            out.printf("<img src='/upload/goods/%s' width=250 height=250>\n", goodsPhoto.getPath());
-            out.printf("<a href='/goods/delete/photo?no=%s'>[삭제]</a>\n", goodsPhoto.getNo());
-            out.println("</div>");
-        }
-        out.println("<div>");
-        out.println("사진 추가: <input multiple name='photos' type='file'>");
-        out.println("</div>");
-        out.println("<div>");
-        out.println("<h3>상품명</h3>");
-        out.printf("<input name='name' value='%s'>\n", goods.getName());
-        out.println("</div>");
-        out.println("<div>");
-        out.println("<h3>가격</h3>");
-        out.printf("<input name='price' value='%s'>\n", goods.getPrice());
-        out.println("</div>");
-        out.println("<div>");
-        out.println("<h3>설명</h3>");
-        out.printf("<input name='spec' value='%s'>\n", goods.getSpec());
-        out.println("</div>");
-        out.println("<div>");
-        out.println("<h3>등록일</h3>");
-        out.printf("<input readonly type='text' value='%s'>\n", goods.getRegDate());
-        out.println("</div>");
-        out.println("<button>변경</button>");
-        out.println("</form>");
-
-        out.println("<form action='/goods/delete' method='post'>");
-        out.printf("<input name='no' value='%s' type='hidden'>\n", goods.getNo());
-        out.println("<button>삭제</button>");
-        out.println("</form>");
-
-        req.getRequestDispatcher("/footer").include(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = resp.getWriter();
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                out.println("<h2>로그인이 필요합니다.</h2>");
-                resp.setHeader("Refresh", "1;url=/auth/login");
+                resp.sendRedirect("/auth/login");
+                return;
             }
             Goods goods = new Goods();
             goods.setNo(Integer.parseInt(req.getParameter("no")));
@@ -117,11 +82,12 @@ public class GoodsModifyServlet extends HttpServlet {
                     goodsPhotoDao.add(goodsPhoto);
                 }
             }
-            out.println("<h3>상품 정보 변경이 완료되었습니다.</h3>");
-            resp.setHeader("Refresh", "1;url=/auth/mypage");
+            resp.sendRedirect("/auth/mypage");
 
         } catch (Exception e) {
-
+            req.setAttribute("message", "상품 수정 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
     }
 }

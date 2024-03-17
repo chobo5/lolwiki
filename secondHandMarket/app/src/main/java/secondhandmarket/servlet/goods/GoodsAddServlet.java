@@ -45,7 +45,10 @@ public class GoodsAddServlet extends HttpServlet {
             }
             req.getRequestDispatcher("/goods/add.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("message", "GoodsAddServlet get 오류");
+            req.setAttribute("message", "상품 등록페이지 불러오기 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+
         }
     }
 
@@ -79,18 +82,14 @@ public class GoodsAddServlet extends HttpServlet {
                 }
             }
             txManager.commit();
-
-
-
-            out.println("<h2>상품 등록이 완료되었습니다.</h2>");
-            resp.setHeader("Refresh", "1;url=/home");
-            req.getRequestDispatcher("/footer").include(req, resp);
+            resp.sendRedirect("/home");
         } catch (Exception e) {
-            System.out.println("GoodsAddServlet - Post 오류");
+            req.setAttribute("message", "상품 등록 오류");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
             try {
                 txManager.rollback();
             } catch (Exception ex) {
-                System.out.println("GoodsAddServlet - rollback 오류");
             }
         }
     }
