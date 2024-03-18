@@ -38,7 +38,7 @@ public class JoinServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/auth/join.jsp").forward(req, resp);
+        req.setAttribute("viewUrl", "/auth/join.jsp");
     }
 
     @Override
@@ -62,10 +62,10 @@ public class JoinServlet extends HttpServlet {
 
             if (!password1.equals(password2)) {
                 req.setAttribute("message", "비밀번호가 일치하지 않습니다.");
-                req.getRequestDispatcher("/error.jsp").forward(req, resp);
+                req.setAttribute("viewUrl", "/error.jsp");
             } else if (userDao.findBy(nickName) != null) {
                 req.setAttribute("message", "이미 존재하는 닉네임 입니다.");
-                req.getRequestDispatcher("/error.jsp").forward(req, resp);
+                req.setAttribute("viewUrl", "/error.jsp");
             } else {
                 User user = new User();
                 user.setNickname(nickName);
@@ -77,7 +77,7 @@ public class JoinServlet extends HttpServlet {
                 profilePhoto.setRefNo(user.getNo());
                 userPhotoDao.add(profilePhoto);
                 txManager.commit();
-                req.getRequestDispatcher("/home.jsp").forward(req, resp);
+                req.setAttribute("viewUrl", "/home.jsp");
             }
 
         } catch (Exception e) {
