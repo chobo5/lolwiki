@@ -3,7 +3,7 @@
 
 
 <jsp:include page="/header.jsp"></jsp:include>
-    <form action="/auth/join" method="post" enctype="multipart/form-data">
+    <form action="/app/auth/join" method="post" enctype="multipart/form-data">
         <div>
         프로필 사진: <input name="photo" type="file">
         </div>

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="/header.jsp"></jsp:include>
-<form action="/auth/changepw" method="post">
+<form action="/app/auth/changepw" method="post">
         <div>
         현재 비밀번호: <input name="currentpw" type="password">
         </div>

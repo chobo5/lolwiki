@@ -4,14 +4,14 @@
 
 <jsp:include page="/header.jsp"></jsp:include>
 
-<form action="/goods/modify" method="post" enctype="multipart/form-data">
+<form action="/app/goods/modify" method="post" enctype="multipart/form-data">
         <div>
         <input name="no" value="${goods.no}" type="hidden">
         </div>
         <c:forEach items="${goodsPhotos}" var="photo">
             <div>
             <img src="/upload/goods/${photo.path}" width=250 height=250>
-            <a href="/goods/delete/photo?no=${photo.no}">[삭제]</a>
+            <a href="/app/goods/delete/photo?no=${photo.no}">[삭제]</a>
             </div>
         </c:forEach>
         <div>
@@ -36,7 +36,7 @@
         <button>변경</button>
         </form>
 
-        <form action="/goods/delete" method="post">
+        <form action="/app/goods/delete" method="post">
         <input name="no" value="${goods.no}" type="hidden">
         <button>삭제</button>
         </form>

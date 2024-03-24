@@ -5,8 +5,8 @@
     <header>
         <meta charset='UTF-8'>
         <title>중고 장터</a></title>
-         <h1><a href='/home'>중고 장터</a></h1>
-         <form action='/goods/list'>
+         <h1><a href='/app/home'>중고 장터</a></h1>
+         <form action='/app/goods/list'>
             <div>
             <input name='keyword' type='text' placeholder='검색어를 입력해주세요'>
             </div>
@@ -14,13 +14,13 @@
          </form>
 
    <c:if test= "${empty loginUser}">
-        <a href='/auth/join'>회원가입</a>
-        <a href='/auth/login'>로그인</a>
+        <a href='/app/auth/join'>회원가입</a>
+        <a href='/app/auth/login'>로그인</a>
    </c:if>
    <c:if test= "${not empty loginUser}">
         <span>${nickname}</span>
-        <a href='/auth/logout'>로그아웃</a>
-        <a href='/auth/mypage'>마이페이지</a>
+        <a href='/app/auth/logout'>로그아웃</a>
+        <a href='/app/auth/mypage'>마이페이지</a>
    </c:if>
    </header>
    <body>

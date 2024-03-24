@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
             }
         }
         req.setAttribute("savedNickname", savedNickname);
-        req.getRequestDispatcher("/auth/login.jsp").forward(req, resp);
+        req.setAttribute("viewUrl", "/auth/login.jsp");
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
         User loginUser = userDao.findByNicknameAndPassword(nickName, password);
         if (loginUser == null) {
             req.setAttribute("message","닉네임 또는 비밀번호가 일치하지 않습니다.");
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         } else {
             req.getSession().setAttribute("loginUser", loginUser);
             if (checkbox != null) {
@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
                 cookie.setMaxAge(0);
                 resp.addCookie(cookie);
             }
-            resp.sendRedirect("/home");
+            req.setAttribute("viewUrl", "redirect:home");
         }
     }
 }

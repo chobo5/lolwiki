@@ -3,7 +3,7 @@
 
 
 <jsp:include page="/header.jsp"></jsp:include>
-    <form action="/goods/add" method="post" enctype="multipart/form-data">
+    <form action="/app/goods/add" method="post" enctype="multipart/form-data">
         <div>
         상품 사진: <input multiple name="photos" type="file">
         </div>
@@ -18,4 +18,4 @@
         </div>
         <button>등록</button>
     </form>
-<jsp:include page="/footer.jsp"></jsp:include>
+<jsp:include page="/app/footer.jsp"></jsp:include>

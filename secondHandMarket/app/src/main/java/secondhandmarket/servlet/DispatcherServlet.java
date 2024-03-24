@@ -1,6 +1,10 @@
 package secondhandmarket.servlet;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -11,8 +15,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
+@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
+
+    private Log log = LogFactory.getLog(DispatcherServlet.class);
+
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher(req.getPathInfo()).include(req, resp);

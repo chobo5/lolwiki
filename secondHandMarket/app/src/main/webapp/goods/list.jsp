@@ -12,7 +12,7 @@
                     <c:forEach items="${goodsList}" var="goods">
                         <tr>
                         <td><img src="/upload/goods/${goods.photoList[0].path}" width=150 height=150></td>
-                        <td><a href="/goods/view?no=${goods.no}">${goods.name}</a></td>
+                        <td><a href="/app/goods/view?no=${goods.no}">${goods.name}</a></td>
                         <td>${goods.price}원</td>
                         <td>${goods.regDate}</td>
                         </tr>

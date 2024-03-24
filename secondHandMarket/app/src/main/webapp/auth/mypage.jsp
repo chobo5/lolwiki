@@ -3,7 +3,7 @@
 
 
 <jsp:include page="/header.jsp"></jsp:include>
-    <form action="/auth/mypage" method="post" enctype="multipart/form-data">
+    <form action="/app/auth/mypage" method="post" enctype="multipart/form-data">
                 <div>
                 <img src="/upload/user/${userPhoto.path}" width=250 height=250>
                 </div>
@@ -18,12 +18,12 @@
                 </div>
                 <button>변경</button>
                 </form>
-                <a href="/auth/changepw">비밀번호 변경</a>
+                <a href="/app/auth/changepw">비밀번호 변경</a>
                 <br>
                 <br>
                 <h3>판매 상품</h3>
                 <c:forEach items="${goodsOfUser}" var="goods">
-                    <p><a href="/goods/modify?no=${goods.no}">${goods.name}</a></p>
+                    <p><a href="/app/goods/modify?no=${goods.no}">${goods.name}</a></p>
                     <c:forEach items="${goods.photoList}" var="photo">
                         <img src="/upload/goods/${photo.path}" width=250 height=250>
                     </c:forEach>

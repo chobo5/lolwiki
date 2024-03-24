@@ -3,7 +3,7 @@
 
 
 <jsp:include page="/header.jsp"></jsp:include>
-    <form action="/auth/login" method="post">
+    <form action="/app/auth/login" method="post">
         <div>
         닉네임: <input name="nickname" type="text" value="${savedNickname}">
         </div>
