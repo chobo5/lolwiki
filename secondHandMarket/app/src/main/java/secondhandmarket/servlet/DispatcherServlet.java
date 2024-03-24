@@ -19,9 +19,6 @@ import java.util.List;
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
 
-    private Log log = LogFactory.getLog(DispatcherServlet.class);
-
-
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher(req.getPathInfo()).include(req, resp);
