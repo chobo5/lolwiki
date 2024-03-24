@@ -1,4 +1,4 @@
-package secondhandmarket.servlet.goods;
+package secondhandmarket.controller.goods;
 
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 

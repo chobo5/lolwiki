@@ -1,4 +1,4 @@
-package secondhandmarket.servlet.auth;
+package secondhandmarket.controller.auth;
 
 import secondhandmarket.dao.UserPhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;

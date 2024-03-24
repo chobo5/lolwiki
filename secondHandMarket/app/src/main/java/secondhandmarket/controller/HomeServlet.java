@@ -1,4 +1,6 @@
-package secondhandmarket.servlet.auth;
+package secondhandmarket.controller;
+
+import secondhandmarket.vo.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -6,12 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet("/auth/logout")
-public class LogoutServlet extends HttpServlet {
+@WebServlet("/home")
+public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getSession().invalidate();
-        req.setAttribute("viewUrl","redirect:/app/home");
+        req.getRequestDispatcher("/home.jsp").forward(req, resp);
     }
 }
