@@ -22,11 +22,11 @@ public class GoodsPhotoDeleteServlet extends HttpServlet {
         try {
             int no = Integer.parseInt(req.getParameter("no"));
             goodsPhotoDao.delete(no);
-            resp.sendRedirect(req.getHeader("Referer"));
+            req.setAttribute("viewUrl", "redirect:/app/auth/mypage");
         } catch (Exception e) {
             req.setAttribute("message", "상품 사진 삭제 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         }
 
     }

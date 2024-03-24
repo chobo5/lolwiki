@@ -37,11 +37,11 @@ public class GoodsViewServlet extends HttpServlet {
             Goods goods = goodsDao.findBy(no);
             req.setAttribute("goodsPhotos", goodsPhotos);
             req.setAttribute("goods", goods);
-            req.getRequestDispatcher("/goods/view.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/app/goods/view.jsp");
         } catch (Exception e) {
             req.setAttribute("message", "상품 상세 불러오기 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         }
     }
 }

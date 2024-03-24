@@ -30,7 +30,7 @@ public class GoodsDeleteServlet extends HttpServlet {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                resp.sendRedirect("/auth/login");
+                req.setAttribute("viewUrl", "redirect:/app/auth/login");
                 return;
             }
             txManager.startTransaction();
@@ -38,11 +38,11 @@ public class GoodsDeleteServlet extends HttpServlet {
             goodsPhotoDao.deleteAll(goodsNo);
             goodsDao.delete(goodsNo);
             txManager.commit();
-            resp.sendRedirect("/auth/mypage");
+            req.setAttribute("viewUrl","redirect:/app/auth/mypage");
         } catch (Exception e) {
             req.setAttribute("message", "상품 삭제 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl","/error.jsp");
             try {
                 txManager.rollback();
             } catch (Exception ex) {

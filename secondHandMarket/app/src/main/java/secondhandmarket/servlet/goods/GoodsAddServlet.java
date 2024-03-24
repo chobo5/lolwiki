@@ -40,14 +40,14 @@ public class GoodsAddServlet extends HttpServlet {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                resp.sendRedirect("/auth/login");
+                req.setAttribute("viewUrl","redirect:/app/auth/login");
                 return;
             }
-            req.getRequestDispatcher("/goods/add.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/goods/add.jsp");
         } catch (Exception e) {
             req.setAttribute("message", "상품 등록페이지 불러오기 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
 
         }
     }
@@ -82,11 +82,11 @@ public class GoodsAddServlet extends HttpServlet {
                 }
             }
             txManager.commit();
-            resp.sendRedirect("/home");
+            req.setAttribute("viewUrl","redirect:/app/home");
         } catch (Exception e) {
             req.setAttribute("message", "상품 등록 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
             try {
                 txManager.rollback();
             } catch (Exception ex) {

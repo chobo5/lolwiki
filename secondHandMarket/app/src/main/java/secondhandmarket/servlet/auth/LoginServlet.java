@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
                 cookie.setMaxAge(0);
                 resp.addCookie(cookie);
             }
-            req.setAttribute("viewUrl", "redirect:home");
+            req.setAttribute("viewUrl", "redirect:/app/home");
         }
     }
 }

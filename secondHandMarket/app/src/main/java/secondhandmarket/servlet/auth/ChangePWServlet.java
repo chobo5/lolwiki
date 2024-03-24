@@ -22,10 +22,10 @@ public class ChangePWServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
         if (loginUser == null) {
-            resp.sendRedirect("/auth/login");
+            req.setAttribute("viewUrl","/app/auth/login");
             return;
         }
-        req.getRequestDispatcher("/auth/changepw.jsp").forward(req, resp);
+        req.setAttribute("viewUrl", "/auth/changepw.jsp");
     }
 
     @Override
@@ -41,11 +41,11 @@ public class ChangePWServlet extends HttpServlet {
             //유저가 없거나 loginUser, 가져온유저가 다르면 또는 비밀번호와 확인이 일치하지 않으면 비밀번호가 일치하지 않음 표시
             if (user == null || (loginUser.getNo() != user.getNo()) || !newPw1.equals(newPw2)) {
                 req.setAttribute("message","비밀번호가 일치하지 않습니다.");
-                req.getRequestDispatcher("/error.jsp").forward(req, resp);
+                req.setAttribute("viewUrl","/error.jsp");
             } else {
                 loginUser.setPassword(newPw1);
                 userDao.updatePassword(loginUser);
-                resp.sendRedirect("/auth/mypage");
+                req.setAttribute("viewUrl","redirect:/app/auth/mypage");
             }
         } catch (Exception e) {
             req.setAttribute("message", "비밀번호 변경 오류");

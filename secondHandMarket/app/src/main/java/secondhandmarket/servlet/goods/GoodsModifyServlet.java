@@ -38,7 +38,7 @@ public class GoodsModifyServlet extends HttpServlet {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                resp.sendRedirect("/auth/login");
+                req.setAttribute("viewUrl","redirect:/app/auth/login");
                 return;
             }
             int no = Integer.parseInt(req.getParameter("no"));
@@ -46,11 +46,11 @@ public class GoodsModifyServlet extends HttpServlet {
             Goods goods = goodsDao.findBy(no);
             req.setAttribute("goodsPhotos", goodsPhotos);
             req.setAttribute("goods", goods);
-            req.getRequestDispatcher("/goods/modify.jsp").forward(req, resp);
+            req.setAttribute("viewUrl","/goods/modify.jsp");
         } catch (Exception e) {
             req.setAttribute("message", "상품 수정 불러오기 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl","/error.jsp");
         }
     }
 
@@ -59,7 +59,7 @@ public class GoodsModifyServlet extends HttpServlet {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                resp.sendRedirect("/auth/login");
+                req.setAttribute("viewUrl","redirect:/app/auth/login");
                 return;
             }
             Goods goods = new Goods();
@@ -82,12 +82,12 @@ public class GoodsModifyServlet extends HttpServlet {
                     goodsPhotoDao.add(goodsPhoto);
                 }
             }
-            resp.sendRedirect("/auth/mypage");
+            req.setAttribute("viewUrl","redirect:/app/auth/mypage");
 
         } catch (Exception e) {
             req.setAttribute("message", "상품 수정 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         }
     }
 }

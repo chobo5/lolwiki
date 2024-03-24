@@ -42,12 +42,12 @@ public class GoodsListServlet extends HttpServlet {
                 goods.setPhotoList(goodsPhotoDao.findBy(goods.getNo()));
             }
             req.setAttribute("goodsList", goodsList);
-            req.getRequestDispatcher("/goods/list.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/goods/list.jsp");
 
         } catch (Exception e) {
             req.setAttribute("message", "검색 목록 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         }
     }
 }

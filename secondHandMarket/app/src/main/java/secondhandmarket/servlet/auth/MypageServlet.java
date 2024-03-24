@@ -45,7 +45,7 @@ public class MypageServlet extends HttpServlet {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                resp.sendRedirect("/home");
+                req.setAttribute("viewUrl", "/app/home");
                 return;
             }
             Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
@@ -63,12 +63,12 @@ public class MypageServlet extends HttpServlet {
                 goods.setPhotoList(photoList);
             }
             req.setAttribute("goodsOfUser", goodsOfUser);
-            req.getRequestDispatcher("/auth/mypage.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/auth/mypage.jsp");
 
         } catch (Exception e) {
             req.setAttribute("message", "마이페이지 불러오기 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+            req.setAttribute("viewUrl", "/error.jsp");
         }
     }
 
@@ -108,11 +108,11 @@ public class MypageServlet extends HttpServlet {
                 userPhotoDao.update(profilePhoto);
             }
             userPhotoDao.update(profilePhoto);
-            resp.sendRedirect("/auth/mypage");
+            req.setAttribute("viewUrl", "redirect:/auth/mypage");
         } catch (Exception e) {
             req.setAttribute("message", "마이페이지 회원정보 변경 오류");
             req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error").forward(req, resp);
+            req.setAttribute("viewUrl", "/error");
         }
     }
 }
