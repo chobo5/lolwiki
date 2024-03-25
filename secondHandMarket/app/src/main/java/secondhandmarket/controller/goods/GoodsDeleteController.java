@@ -1,5 +1,6 @@
 package secondhandmarket.controller.goods;
 
+import secondhandmarket.controller.PageController;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.util.TransactionManager;
@@ -11,42 +12,39 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
-@WebServlet("/goods/delete")
-public class GoodsDeleteServlet extends HttpServlet {
+public class GoodsDeleteController implements PageController {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;
     TransactionManager txManager;
 
-    @Override
-    public void init() throws ServletException {
-        goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
-        goodsPhotoDao = (GoodsPhotoDaoImpl) this.getServletContext().getAttribute("goodsPhotoDao");
-        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
+    public GoodsDeleteController(GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao, TransactionManager txManager) {
+        this.goodsDao = goodsDao;
+        this.goodsPhotoDao = goodsPhotoDao;
+        this.txManager = txManager;
     }
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             if (loginUser == null) {
-                req.setAttribute("viewUrl", "redirect:/app/auth/login");
-                return;
+                return "redirect:/app/auth/login";
             }
             txManager.startTransaction();
             int goodsNo = Integer.parseInt(req.getParameter("no"));
             goodsPhotoDao.deleteAll(goodsNo);
             goodsDao.delete(goodsNo);
             txManager.commit();
-            req.setAttribute("viewUrl","redirect:/app/auth/mypage");
+            return "redirect:/app/auth/mypage";
         } catch (Exception e) {
             req.setAttribute("message", "상품 삭제 오류");
             req.setAttribute("exception", e);
-            req.setAttribute("viewUrl","/error.jsp");
             try {
                 txManager.rollback();
             } catch (Exception ex) {
             }
+            return "/error.jsp";
         }
     }
 

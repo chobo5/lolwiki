@@ -1,5 +1,6 @@
 package secondhandmarket.controller.goods;
 
+import secondhandmarket.controller.PageController;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.util.TransactionManager;
@@ -15,45 +16,39 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.UUID;
 
-@MultipartConfig(maxFileSize = 1024 * 1024 * 10)
-@WebServlet("/goods/add")
-public class GoodsAddServlet extends HttpServlet {
+public class GoodsAddController implements PageController {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;
     String uploadDir;
     TransactionManager txManager;
 
-    @Override
-    public void init() throws ServletException {
-        txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
-        goodsDao = (GoodsDaoImpl) this.getServletContext().getAttribute("goodsDao");
-        goodsPhotoDao = (GoodsPhotoDaoImpl) this.getServletContext().getAttribute("goodsPhotoDao");
-        uploadDir = this.getServletContext().getRealPath("/upload/goods");
+    public GoodsAddController(GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao, String uploadDir, TransactionManager txManager) {
+        this.goodsDao = goodsDao;
+        this.goodsPhotoDao = goodsPhotoDao;
+        this.uploadDir = uploadDir;
+        this.txManager = txManager;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            User loginUser = (User) req.getSession().getAttribute("loginUser");
-            if (loginUser == null) {
-                req.setAttribute("viewUrl","redirect:/app/auth/login");
-                return;
+    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        if (req.getMethod().equals("get")) {
+            try {
+                User loginUser = (User) req.getSession().getAttribute("loginUser");
+                if (loginUser == null) {
+                    return "redirect:/app/auth/login";
+                }
+                return "/goods/add.jsp";
+            } catch (Exception e) {
+                req.setAttribute("message", "상품 등록페이지 불러오기 오류");
+                req.setAttribute("exception", e);
+                return "/error.jsp";
+
             }
-            req.setAttribute("viewUrl", "/goods/add.jsp");
-        } catch (Exception e) {
-            req.setAttribute("message", "상품 등록페이지 불러오기 오류");
-            req.setAttribute("exception", e);
-            req.setAttribute("viewUrl", "/error.jsp");
-
         }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");
             String name = req.getParameter("name");
@@ -82,15 +77,15 @@ public class GoodsAddServlet extends HttpServlet {
                 }
             }
             txManager.commit();
-            req.setAttribute("viewUrl","redirect:/app/home");
+            return "redirect:/app/home";
         } catch (Exception e) {
             req.setAttribute("message", "상품 등록 오류");
             req.setAttribute("exception", e);
-            req.setAttribute("viewUrl", "/error.jsp");
             try {
                 txManager.rollback();
             } catch (Exception ex) {
             }
+            return "/error.jsp";
         }
     }
 
