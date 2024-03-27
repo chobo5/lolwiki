@@ -38,7 +38,7 @@ public class MypageController implements PageController {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (req.getMethod().equals("get")) {
+        if (req.getMethod().equals("GET")) {
             try {
                 if (loginUser == null) {
                     return"/app/home";
@@ -100,7 +100,7 @@ public class MypageController implements PageController {
                 userPhotoDao.update(profilePhoto);
             }
             userPhotoDao.update(profilePhoto);
-            return "redirect:/auth/mypage";
+            return "redirect:/app/auth/mypage";
         } catch (Exception e) {
             req.setAttribute("message", "마이페이지 회원정보 변경 오류");
             req.setAttribute("exception", e);

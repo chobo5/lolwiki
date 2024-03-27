@@ -37,7 +37,7 @@ public class GoodsModifyController implements PageController {
         if (loginUser == null) {
             return "redirect:/app/auth/login";
         }
-        if (req.getMethod().equals("get")) {
+        if (req.getMethod().equals("GET")) {
             try {
                 int no = Integer.parseInt(req.getParameter("no"));
                 List<Photo> goodsPhotos = goodsPhotoDao.findBy(no);

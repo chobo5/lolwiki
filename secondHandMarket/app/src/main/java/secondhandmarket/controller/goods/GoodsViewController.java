@@ -33,7 +33,7 @@ public class GoodsViewController implements PageController {
             Goods goods = goodsDao.findBy(no);
             req.setAttribute("goodsPhotos", goodsPhotos);
             req.setAttribute("goods", goods);
-            return "/app/goods/view.jsp";
+            return "/goods/view.jsp";
         } catch (Exception e) {
             req.setAttribute("message", "상품 상세 불러오기 오류");
             req.setAttribute("exception", e);

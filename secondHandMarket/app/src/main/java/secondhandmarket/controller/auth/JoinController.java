@@ -29,7 +29,7 @@ public class JoinController implements PageController {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (req.getMethod().equals("get")) {
+        if (req.getMethod().equals("GET")) {
             return "/auth/join.jsp";
         }
 

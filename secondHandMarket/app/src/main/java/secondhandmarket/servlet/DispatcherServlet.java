@@ -1,5 +1,7 @@
 package secondhandmarket.servlet;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import secondhandmarket.controller.HomeController;
 import secondhandmarket.controller.PageController;
 import secondhandmarket.controller.auth.*;
@@ -28,11 +30,12 @@ import java.util.Map;
 @MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
-
+    private static final Log log = LogFactory.getLog(DispatcherServlet.class);
     private Map<String, PageController> controllerMap = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
+        log.debug("생성됨");
         ServletContext context = this.getServletContext();
         TransactionManager txManager = (TransactionManager) context.getAttribute("txManager");
         GoodsDaoImpl goodsDao = (GoodsDaoImpl) context.getAttribute("goodsDao");
@@ -54,22 +57,22 @@ public class DispatcherServlet extends HttpServlet {
         controllerMap.put("/goods/delete", new GoodsDeleteController(goodsDao, goodsPhotoDao, txManager));
         controllerMap.put("/goods/list", new GoodsListController(goodsDao, goodsPhotoDao, goodsUploadDir));
         controllerMap.put("/goods/modify", new GoodsModifyController(goodsDao, goodsPhotoDao, goodsUploadDir));
-        controllerMap.put("goods/delete/photo", new GoodsPhotoDeleteController(goodsPhotoDao));
+        controllerMap.put("/goods/photo/delete", new GoodsPhotoDeleteController(goodsPhotoDao));
         controllerMap.put("/goods/view", new GoodsViewController(goodsDao, goodsPhotoDao, goodsUploadDir));
 
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher(req.getPathInfo()).include(req, resp);
 
         PageController pageController = controllerMap.get(req.getPathInfo());
         if (pageController == null) {
-            throw new ServletException(req.getPathInfo() + "요청 페이지르 찾을 수 없습니다.");
+            throw new ServletException(req.getPathInfo() + "요청 페이지를 찾을 수 없습니다.");
         }
 
         try {
-            String viewUrl = (String) req.getAttribute("viewUrl");
+            String viewUrl = pageController.execute(req, resp);
+            System.out.println("viewUrl" + viewUrl);
             if (viewUrl.startsWith("redirect:")) {
                 resp.sendRedirect(viewUrl.substring(9));
             } else {

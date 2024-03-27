@@ -17,7 +17,7 @@ public class ChangePwController implements PageController {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (req.getMethod().equals("get")) {
+        if (req.getMethod().equals("GET")) {
             if (loginUser == null) {
                 return "/app/auth/login";
             }

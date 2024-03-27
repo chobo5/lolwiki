@@ -18,7 +18,7 @@ public class LoginController implements PageController {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (req.getMethod().equals("get")) {
+        if (req.getMethod().equals("GET")) {
             Cookie[] cookies = req.getCookies();
             String savedNickname = "";
             if (cookies != null) {
