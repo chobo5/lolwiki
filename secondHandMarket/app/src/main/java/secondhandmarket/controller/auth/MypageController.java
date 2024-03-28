@@ -1,6 +1,6 @@
 package secondhandmarket.controller.auth;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.dao.UserDaoImpl;
@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class MypageController implements PageController {
+public class MypageController {
 
     private UserDaoImpl userDao;
     private GoodsDaoImpl goodsDao;
@@ -35,7 +35,7 @@ public class MypageController implements PageController {
         this.userPhotoDir = userPhotoDir;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
         if (req.getMethod().equals("GET")) {

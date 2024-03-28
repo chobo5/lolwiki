@@ -1,6 +1,6 @@
 package secondhandmarket.controller.auth;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.vo.User;
 
@@ -8,7 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class LoginController implements PageController {
+public class LoginController {
 
     UserDaoImpl userDao;
 
@@ -16,7 +16,7 @@ public class LoginController implements PageController {
         this.userDao = userDao;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (req.getMethod().equals("GET")) {
             Cookie[] cookies = req.getCookies();

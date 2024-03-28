@@ -1,23 +1,21 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class GoodsPhotoDeleteController implements PageController {
+public class GoodsPhotoDeleteController {
     private GoodsPhotoDaoImpl goodsPhotoDao;
 
     public GoodsPhotoDeleteController(GoodsPhotoDaoImpl goodsPhotoDao) {
         this.goodsPhotoDao = goodsPhotoDao;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             int no = Integer.parseInt(req.getParameter("no"));

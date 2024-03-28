@@ -1,21 +1,16 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.vo.Goods;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class GoodsListController implements PageController {
+public class GoodsListController {
 
     private GoodsDaoImpl goodsDao;
     private GoodsPhotoDaoImpl goodsPhotoDao;
@@ -26,8 +21,7 @@ public class GoodsListController implements PageController {
         this.goodsPhotoDao = goodsPhotoDao;
         this.uploadDir = uploadDir;
     }
-
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();

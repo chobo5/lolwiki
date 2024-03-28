@@ -1,6 +1,6 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.util.TransactionManager;
@@ -8,18 +8,13 @@ import secondhandmarket.vo.Goods;
 import secondhandmarket.vo.Photo;
 import secondhandmarket.vo.User;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
-public class GoodsAddController implements PageController {
+public class GoodsAddController {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;
     String uploadDir;
@@ -31,8 +26,7 @@ public class GoodsAddController implements PageController {
         this.uploadDir = uploadDir;
         this.txManager = txManager;
     }
-
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (req.getMethod().equals("GET")) {
             try {

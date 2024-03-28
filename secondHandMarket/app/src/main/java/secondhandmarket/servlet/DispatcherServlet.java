@@ -3,7 +3,7 @@ package secondhandmarket.servlet;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import secondhandmarket.controller.HomeController;
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.controller.auth.*;
 import secondhandmarket.controller.goods.*;
 import secondhandmarket.dao.GoodsDaoImpl;
@@ -16,22 +16,21 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(DispatcherServlet.class);
-    private Map<String, PageController> controllerMap = new HashMap<>();
+    private Map<String, Object> controllerMap = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
@@ -65,14 +64,18 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        PageController pageController = controllerMap.get(req.getPathInfo());
+        Object pageController = controllerMap.get(req.getPathInfo());
         if (pageController == null) {
             throw new ServletException(req.getPathInfo() + "요청 페이지를 찾을 수 없습니다.");
         }
 
         try {
-            String viewUrl = pageController.execute(req, resp);
-            System.out.println("viewUrl" + viewUrl);
+            Method requestHandler = findRequestHandler(pageController);
+            if (requestHandler == null) {
+                throw new Exception(req.getPathInfo() + "요청 페이지를 찾을 수 없습니다.");
+            }
+            String viewUrl = (String) requestHandler.invoke(pageController, req, resp);
+
             if (viewUrl.startsWith("redirect:")) {
                 resp.sendRedirect(viewUrl.substring(9));
             } else {
@@ -88,4 +91,16 @@ public class DispatcherServlet extends HttpServlet {
             req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
     }
+
+    private Method findRequestHandler(Object controller) {
+        Method[] methods = controller.getClass().getMethods();
+        for (Method m : methods) {
+            RequestMapping requestMapping = m.getAnnotation(RequestMapping.class);
+            if (requestMapping != null) {
+                return m;
+            }
+        }
+        return null;
+    }
+
 }

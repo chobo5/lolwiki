@@ -1,6 +1,6 @@
 package secondhandmarket.controller.auth;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.dao.UserPhotoDaoImpl;
 import secondhandmarket.util.TransactionManager;
@@ -13,7 +13,7 @@ import javax.servlet.http.Part;
 import java.util.Collection;
 import java.util.UUID;
 
-public class JoinController implements PageController {
+public class JoinController {
 
     private UserDaoImpl userDao;
     private UserPhotoDaoImpl userPhotoDao;
@@ -27,7 +27,7 @@ public class JoinController implements PageController {
         this.txManager = txManager;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (req.getMethod().equals("GET")) {
             return "/auth/join.jsp";

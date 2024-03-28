@@ -1,19 +1,18 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.vo.Goods;
 import secondhandmarket.vo.Photo;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public class GoodsViewController implements PageController {
+public class GoodsViewController {
 
     private GoodsDaoImpl goodsDao;
     private GoodsPhotoDaoImpl goodsPhotoDao;
@@ -25,7 +24,7 @@ public class GoodsViewController implements PageController {
         this.uploadDir = uploadDir;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             int no = Integer.parseInt(req.getParameter("no"));

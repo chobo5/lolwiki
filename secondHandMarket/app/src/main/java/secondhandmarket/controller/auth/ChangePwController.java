@@ -1,20 +1,20 @@
 package secondhandmarket.controller.auth;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.UserDaoImpl;
 import secondhandmarket.vo.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ChangePwController implements PageController {
+public class ChangePwController {
     UserDaoImpl userDao;
 
     public ChangePwController(UserDaoImpl userDao) {
         this.userDao = userDao;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
         if (req.getMethod().equals("GET")) {

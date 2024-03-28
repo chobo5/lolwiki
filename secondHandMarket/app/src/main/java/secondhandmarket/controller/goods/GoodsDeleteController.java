@@ -1,19 +1,15 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.util.TransactionManager;
 import secondhandmarket.vo.User;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-public class GoodsDeleteController implements PageController {
+public class GoodsDeleteController {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;
     TransactionManager txManager;
@@ -23,8 +19,7 @@ public class GoodsDeleteController implements PageController {
         this.goodsPhotoDao = goodsPhotoDao;
         this.txManager = txManager;
     }
-
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         try {
             User loginUser = (User) req.getSession().getAttribute("loginUser");

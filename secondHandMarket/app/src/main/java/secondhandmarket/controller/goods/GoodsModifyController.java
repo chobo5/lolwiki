@@ -1,25 +1,20 @@
 package secondhandmarket.controller.goods;
 
-import secondhandmarket.controller.PageController;
+import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
 import secondhandmarket.vo.Goods;
 import secondhandmarket.vo.Photo;
 import secondhandmarket.vo.User;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class GoodsModifyController implements PageController {
+public class GoodsModifyController {
 
     private GoodsDaoImpl goodsDao;
     private GoodsPhotoDaoImpl goodsPhotoDao;
@@ -31,7 +26,7 @@ public class GoodsModifyController implements PageController {
         this.uploadDir = uploadDir;
     }
 
-    @Override
+    @RequestMapping
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception{
         User loginUser = (User) req.getSession().getAttribute("loginUser");
         if (loginUser == null) {
