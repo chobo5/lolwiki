@@ -18,4 +18,4 @@
         </div>
         <button>등록</button>
     </form>
-<jsp:include page="/app/footer.jsp"></jsp:include>
+<jsp:include page="/footer.jsp"></jsp:include>

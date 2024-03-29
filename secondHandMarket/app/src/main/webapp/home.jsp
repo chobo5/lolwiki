@@ -5,7 +5,7 @@
         <br>
         <br>
         <div>
-        <a href='/goods/add'>상품 등록하기</a>
+        <a href='/app/goods/add'>상품 등록하기</a>
         </div>
    </c:if>
 

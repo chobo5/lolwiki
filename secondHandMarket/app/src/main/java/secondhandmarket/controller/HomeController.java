@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class HomeController {
 
-    @RequestMapping
+    @RequestMapping("/home")
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         return "/home.jsp";
     }
