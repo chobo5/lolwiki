@@ -28,7 +28,7 @@ public class AuthController {
     private String userPhotoDir;
 
     public AuthController(TransactionManager txManager, UserDaoImpl userDao, GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao,
-                            UserPhotoDaoImpl userPhotoDao, String goodsPhotoDir, String userPhotoDir) {
+                          UserPhotoDaoImpl userPhotoDao, String goodsPhotoDir, String userPhotoDir) {
         this.txManager = txManager;
         this.userDao = userDao;
         this.goodsDao = goodsDao;
@@ -38,29 +38,25 @@ public class AuthController {
         this.userPhotoDir = userPhotoDir;
     }
 
+    @RequestMapping("/auth/join-form")
+    public String joinForm() {
+        return "/auth/join-form.jsp";
+    }
 
     @RequestMapping("/auth/join")
-    public String join(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (req.getMethod().equals("GET")) {
-            return "/auth/join.jsp";
-        }
-
-        String nickName = req.getParameter("nickname");
-        String phoneNo = req.getParameter("phoneNo");
-        String password1 = req.getParameter("password1");
-        String password2 = req.getParameter("password2");
+    public String join(@RequestParam("nickname") String nickname,
+                       @RequestParam("phoneNo") String phoneNo,
+                       @RequestParam("password1") String password1,
+                       @RequestParam("password2") String password2,
+                       @RequestParam("file") Part file) throws Exception {
         try {
-            Photo profilePhoto = new Photo();
-            Collection<Part> parts = req.getParts();
-            for (Part part : parts) {
-                if (!part.getName().equals("photo") || part.getSize() == 0) {
-                    continue;
-                } else {
-                    String filename = UUID.randomUUID().toString();
-                    part.write(this.userPhotoDir + "/" + filename);
-                    profilePhoto.setPath(filename);
-                }
+
+            if (file.getSize() != 0) {
+                String filename = UUID.randomUUID().toString();
+                part.write(this.userPhotoDir + "/" + filename);
+                profilePhoto.setPath(filename);
             }
+
 
             if (!password1.equals(password2)) {
                 req.setAttribute("message", "비밀번호가 일치하지 않습니다.");
@@ -117,7 +113,7 @@ public class AuthController {
 
         User loginUser = userDao.findByNicknameAndPassword(nickName, password);
         if (loginUser == null) {
-            req.setAttribute("message","닉네임 또는 비밀번호가 일치하지 않습니다.");
+            req.setAttribute("message", "닉네임 또는 비밀번호가 일치하지 않습니다.");
             return "/error.jsp";
         } else {
             req.getSession().setAttribute("loginUser", loginUser);
@@ -146,7 +142,7 @@ public class AuthController {
         if (req.getMethod().equals("GET")) {
             try {
                 if (loginUser == null) {
-                    return"/app/home";
+                    return "/app/home";
                 }
                 Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
                 if (userPhoto == null) {
@@ -214,7 +210,6 @@ public class AuthController {
     }
 
 
-
     @RequestMapping("/auth/changepw")
     public String changePw(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         User loginUser = (User) req.getSession().getAttribute("loginUser");
@@ -233,7 +228,7 @@ public class AuthController {
 
             User user = userDao.findByNicknameAndPassword(loginUser.getNickname(), currPw);
             if (user == null || (loginUser.getNo() != user.getNo()) || !newPw1.equals(newPw2)) {
-                req.setAttribute("message","비밀번호가 일치하지 않습니다.");
+                req.setAttribute("message", "비밀번호가 일치하지 않습니다.");
                 return "/error.jsp";
             } else {
                 loginUser.setPassword(newPw1);

@@ -5,7 +5,7 @@
 <jsp:include page="/header.jsp"></jsp:include>
     <form action="/app/auth/join" method="post" enctype="multipart/form-data">
         <div>
-        프로필 사진: <input name="photo" type="file">
+        프로필 사진: <input name="file" type="file">
         </div>
         <div>
         닉네임: <input name="nickname" type="text">
