@@ -19,13 +19,12 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @MultipartConfig(maxFileSize = 1024 * 1024 * 10)
 @WebServlet("/app/*")
@@ -65,7 +64,7 @@ public class DispatcherServlet extends HttpServlet {
             //pageController가 작업한 결과를 담을 map을 준비한다.
             Map<String, Object> map = new HashMap<>();
             //pageController의 requestHandler의 파라미터들을 알아낸다.
-
+            Object[] args = prepareRequestHandlerArguments(requestHandler.handler, req, resp, map);
 
             String viewUrl = (String) requestHandler.handler.invoke(requestHandler.controller, req, resp);
 
@@ -100,7 +99,7 @@ public class DispatcherServlet extends HttpServlet {
     private Object[] prepareRequestHandlerArguments(Method handler,
                                                     HttpServletRequest request,
                                                     HttpServletResponse response,
-                                                    Map<String, Object> map) {
+                                                    Map<String, Object> map) throws Exception {
         Parameter[] params = handler.getParameters();
         Object[] args = new Object[params.length];
         for (int i = 0; i < params.length; i++) {
@@ -119,14 +118,57 @@ public class DispatcherServlet extends HttpServlet {
                     if (cookieValue != null) {
                         args[i] = valueOf(cookieValue, params[i].getType());
                     }
+                    continue;
                 }
             }
 
 
+            RequestParam requestParam = params[i].getAnnotation(RequestParam.class);
+            if (requestParam != null) {
+                String requestParamName= requestParam.value();
+                if (params[i].getType() == Part[].class) {
+                    Collection<Part> parts = request.getParts();
+                    List<Part> fileParts = new ArrayList<>();
+                    for (Part part : parts) {
+                        if (part.getName().equals(requestParamName)) {
+                            fileParts.add(part);
+                        }
+                    }
+                    args[i] = fileParts.toArray(new Part[0]);
+                } else if (params[i].getType() == Part.class) {
+                    Collection<Part> parts = request.getParts();
+                    for (Part part : parts) {
+                        if (part.getName().equals(requestParamName)) {
+                            args[i] = part;
+                            break;
+                        }
+                    }
+                } else {
+                    args[i] = request.getParameter(requestParamName);
+                }
+                continue;
+            }
 
+            args[i] = createValueObject(params[i].getType(), request);
 
         }
+        return args;
+    }
 
+    private Object createValueObject(Class<?> type, HttpServletRequest request) throws Exception {
+        Constructor constructor = type.getConstructor();
+        Object obj = constructor.newInstance();
+        Method[] methods = type.getDeclaredMethods();
+        for (Method m : methods) {
+            if (m.getName().startsWith("set")) {
+                String propName = Character.toLowerCase(m.getName().charAt(3)) + m.getName().substring(4);
+                if (request.getParameter(propName) != null) {
+                    Class<?> setterParamType = m.getParameters()[0].getType();
+                    m.invoke(obj, valueOf(propName, setterParamType));
+                }
+            }
+        }
+        return obj;
     }
 
     private Object valueOf(String strValue, Class<?> type) {
