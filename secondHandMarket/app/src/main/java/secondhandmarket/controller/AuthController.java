@@ -1,5 +1,7 @@
 package secondhandmarket.controller;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import secondhandmarket.controller.RequestMapping;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
@@ -10,15 +12,14 @@ import secondhandmarket.vo.Goods;
 import secondhandmarket.vo.Photo;
 import secondhandmarket.vo.User;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class AuthController {
+    private static final Log log = LogFactory.getLog(AuthController.class);
     private TransactionManager txManager;
     private UserDaoImpl userDao;
     private GoodsDaoImpl goodsDao;
@@ -38,9 +39,9 @@ public class AuthController {
         this.userPhotoDir = userPhotoDir;
     }
 
-    @RequestMapping("/auth/join-form")
+    @RequestMapping("/auth/join_form")
     public String joinForm() {
-        return "/auth/join-form.jsp";
+        return "/auth/join_form.jsp";
     }
 
     @RequestMapping("/auth/join")
@@ -48,81 +49,72 @@ public class AuthController {
                        @RequestParam("phoneNo") String phoneNo,
                        @RequestParam("password1") String password1,
                        @RequestParam("password2") String password2,
-                       @RequestParam("file") Part file) throws Exception {
+                       @RequestParam("file") Part file,
+                       Map<String, Object> map) throws Exception {
         try {
-
+            Photo photo = new Photo();
             if (file.getSize() != 0) {
                 String filename = UUID.randomUUID().toString();
-                part.write(this.userPhotoDir + "/" + filename);
-                profilePhoto.setPath(filename);
+                file.write(this.userPhotoDir + "/" + filename);
+                photo.setPath(filename);
             }
 
 
             if (!password1.equals(password2)) {
-                req.setAttribute("message", "비밀번호가 일치하지 않습니다.");
-                return "/error.jsp";
-            } else if (userDao.findBy(nickName) != null) {
-                req.setAttribute("message", "이미 존재하는 닉네임 입니다.");
-                return "/error.jsp";
+                throw new Exception("비밀번호가 일치하지 않습니다.");
+            } else if (userDao.findBy(nickname) != null) {
+                throw new Exception("이미 존재하는 닉네임 입니다.");
             } else {
                 User user = new User();
-                user.setNickname(nickName);
+                user.setNickname(nickname);
                 user.setPhoneNo(phoneNo);
                 user.setPassword(password1);
+                user.setPhoto(photo);
 
                 txManager.startTransaction();
                 userDao.add(user);
-                profilePhoto.setRefNo(user.getNo());
-                userPhotoDao.add(profilePhoto);
+                photo.setRefNo(user.getNo());
+                userPhotoDao.add(photo);
                 txManager.commit();
                 return "/home.jsp";
             }
 
         } catch (Exception e) {
-            req.setAttribute("message", "회원가입 오류");
-            req.setAttribute("exception", e);
             try {
                 txManager.rollback();
             } catch (Exception ex) {
             }
-            return "/error.jsp";
-
+            throw new Exception("회원가입 오류");
         }
     }
 
+    @RequestMapping("/auth/login_form")
+    public String loginForm(@CookieValue("savedNickname") String savedNickname,
+                            Map<String, Object> map) {
+        log.debug("/auth/login_form");
+        map.put("savedNickname", savedNickname);
+        return "/auth/login_form.jsp";
+    }
+
     @RequestMapping("/auth/login")
-    public String login(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (req.getMethod().equals("GET")) {
-            Cookie[] cookies = req.getCookies();
-            String savedNickname = "";
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("nickname")) {
-                        savedNickname = cookie.getValue();
-                        break;
-                    }
-                }
-            }
-            req.setAttribute("savedNickname", savedNickname);
-            return "/auth/login.jsp";
-        }
+    public String login(@RequestParam("nickname") String nickname,
+                        @RequestParam("password") String password,
+                        @RequestParam("saveNickname") String saveNickname,
+                        HttpServletResponse resp,
+                        HttpSession session) throws Exception {
 
-        String nickName = req.getParameter("nickname");
-        String password = req.getParameter("password");
-        String checkbox = req.getParameter("saveNickname");
 
-        User loginUser = userDao.findByNicknameAndPassword(nickName, password);
+        User loginUser = userDao.findByNicknameAndPassword(nickname, password);
         if (loginUser == null) {
-            req.setAttribute("message", "닉네임 또는 비밀번호가 일치하지 않습니다.");
-            return "/error.jsp";
+            throw new Exception("닉네임 또는 비밀번호가 일치하지 않습니다.");
         } else {
-            req.getSession().setAttribute("loginUser", loginUser);
-            if (checkbox != null) {
-                Cookie cookie = new Cookie("nickname", nickName);
+            session.setAttribute("loginUser", loginUser);
+            if (saveNickname != null) {
+                Cookie cookie = new Cookie("savedNickname", nickname);
                 cookie.setMaxAge(60 * 60 * 24 * 7);
                 resp.addCookie(cookie);
             } else {
-                Cookie cookie = new Cookie("nickname", "");
+                Cookie cookie = new Cookie("savedNickname", "");
                 cookie.setMaxAge(0);
                 resp.addCookie(cookie);
             }
@@ -131,47 +123,48 @@ public class AuthController {
     }
 
     @RequestMapping("/auth/logout")
-    public String logout(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.getSession().invalidate();
+    public String logout(HttpSession session) {
+        session.invalidate();
         return "redirect:/app/home";
     }
 
-    @RequestMapping("/auth/mypage")
-    public String mypage(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (req.getMethod().equals("GET")) {
-            try {
-                if (loginUser == null) {
-                    return "/app/home";
-                }
-                Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
-                if (userPhoto == null) {
-                    Photo photo = new Photo();
-                    photo.setPath("defaultUser.png");
-                    loginUser.setPhoto(photo);
-                } else {
-                    loginUser.setPhoto(userPhoto);
-                }
-                req.setAttribute("userPhoto", userPhoto);
-                List<Goods> goodsOfUser = goodsDao.findAll(loginUser.getNo());
-                for (Goods goods : goodsOfUser) {
-                    List<Photo> photoList = goodsPhotoDao.findBy(goods.getNo());
-                    goods.setPhotoList(photoList);
-                }
-                req.setAttribute("goodsOfUser", goodsOfUser);
-                return "/auth/mypage.jsp";
-
-            } catch (Exception e) {
-                req.setAttribute("message", "마이페이지 불러오기 오류");
-                req.setAttribute("exception", e);
-                return "/error.jsp";
+    @RequestMapping("/auth/mypage_form")
+    public String mypageForm(HttpSession session, Map<String, Object> map) throws Exception {
+        User loginUser = (User) session.getAttribute("loginUser");
+        try {
+            if (loginUser == null) {
+                return "/auth/login_form.jsp";
             }
+            Photo userPhoto = userPhotoDao.findBy(loginUser.getNo());
+            if (userPhoto == null) {
+                Photo photo = new Photo();
+                photo.setPath("defaultUser.png");
+                loginUser.setPhoto(photo);
+            } else {
+                loginUser.setPhoto(userPhoto);
+            }
+            map.put("userPhoto", userPhoto);
+            List<Goods> goodsOfUser = goodsDao.findAll(loginUser.getNo());
+            for (Goods goods : goodsOfUser) {
+                List<Photo> photoList = goodsPhotoDao.findBy(goods.getNo());
+                goods.setPhotoList(photoList);
+            }
+            map.put("goodsOfUser", goodsOfUser);
+            return "/auth/mypage_form.jsp";
+
+        } catch (Exception e) {
+            throw new Exception("마이페이지 불러오기 오류");
         }
+    }
+
+    @RequestMapping("/auth/mypage")
+    public String mypage(HttpSession session,
+                         @RequestParam("nickname") String nickname,
+                         @RequestParam("phoneNo") String phoneNo,
+                         @RequestParam("file") Part file) throws Exception {
 
         try {
-            String nickname = req.getParameter("nickname");
-            String phoneNo = req.getParameter("phoneNo");
-
+            User loginUser = (User) session.getAttribute("loginUser");
             Photo profilePhoto = userPhotoDao.findBy(loginUser.getNo());
             boolean nullFlag = false;
 
@@ -181,16 +174,10 @@ public class AuthController {
                 profilePhoto.setRefNo(loginUser.getNo());
             }
 
-            Collection<Part> parts = req.getParts();
-            for (Part part : parts) {
-                if (!part.getName().equals("photo") || part.getSize() == 0) {
-                    continue;
-                } else {
-                    String filename = UUID.randomUUID().toString();
-                    part.write(this.userPhotoDir + "/" + filename);
-                    profilePhoto.setPath(filename);
-                }
-            }
+            String filename = UUID.randomUUID().toString();
+            file.write(this.userPhotoDir + "/" + filename);
+            profilePhoto.setPath(filename);
+
             loginUser.setNickname(nickname);
             loginUser.setPhoneNo(phoneNo);
             loginUser.setPhoto(profilePhoto);
@@ -203,42 +190,37 @@ public class AuthController {
             userPhotoDao.update(profilePhoto);
             return "redirect:/app/auth/mypage";
         } catch (Exception e) {
-            req.setAttribute("message", "마이페이지 회원정보 변경 오류");
-            req.setAttribute("exception", e);
-            return "/error";
+            throw new Exception("마이페이지 회원정보 변경 오류");
         }
+    }
+
+    @RequestMapping("/auth/changepw_form")
+    public String changePwForm(HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "/app/auth/login";
+        }
+        return "/auth/changepw_form.jsp";
     }
 
 
     @RequestMapping("/auth/changepw")
-    public String changePw(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (req.getMethod().equals("GET")) {
-            if (loginUser == null) {
-                return "/app/auth/login";
-            }
-            return "/auth/changepw.jsp";
-        }
-
+    public String changePw(HttpSession session,
+                           @RequestParam("currentpw") String currentpw,
+                           @RequestParam("newpw1") String newpw1,
+                           @RequestParam("newpw2") String newpw2) throws Exception {
         try {
-            String currPw = req.getParameter("currentpw");
-            String newPw1 = req.getParameter("newpw1");
-            String newPw2 = req.getParameter("newpw2");
-
-
-            User user = userDao.findByNicknameAndPassword(loginUser.getNickname(), currPw);
-            if (user == null || (loginUser.getNo() != user.getNo()) || !newPw1.equals(newPw2)) {
-                req.setAttribute("message", "비밀번호가 일치하지 않습니다.");
-                return "/error.jsp";
+            User loginUser = (User) session.getAttribute("loginUser");
+            User user = userDao.findByNicknameAndPassword(loginUser.getNickname(), currentpw);
+            if (user == null || (loginUser.getNo() != user.getNo()) || !newpw1.equals(newpw2)) {
+                throw new Exception("비밀번호가 일치하지 않습니다.");
             } else {
-                loginUser.setPassword(newPw1);
+                loginUser.setPassword(newpw1);
                 userDao.updatePassword(loginUser);
                 return "redirect:/app/auth/mypage";
             }
         } catch (Exception e) {
-            req.setAttribute("message", "비밀번호 변경 오류");
-            req.setAttribute("exception", e);
-            return "/error.jsp";
+            throw new Exception("비밀번호 변경 오류");
         }
 
     }

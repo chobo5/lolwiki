@@ -18,7 +18,7 @@
                 </div>
                 <button>변경</button>
                 </form>
-                <a href="/app/auth/changepw">비밀번호 변경</a>
+                <a href="/app/auth/changepw_form">비밀번호 변경</a>
                 <br>
                 <br>
                 <h3>판매 상품</h3>

@@ -14,13 +14,13 @@
          </form>
 
    <c:if test= "${empty loginUser}">
-        <a href='/app/auth/join'>회원가입</a>
-        <a href='/app/auth/login'>로그인</a>
+        <a href='/app/auth/join_form'>회원가입</a>
+        <a href='/app/auth/login_form'>로그인</a>
    </c:if>
    <c:if test= "${not empty loginUser}">
         <span>${nickname}</span>
         <a href='/app/auth/logout'>로그아웃</a>
-        <a href='/app/auth/mypage'>마이페이지</a>
+        <a href='/app/auth/mypage_form'>마이페이지</a>
    </c:if>
    </header>
    <body>
