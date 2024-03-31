@@ -173,10 +173,11 @@ public class AuthController {
                 profilePhoto = new Photo();
                 profilePhoto.setRefNo(loginUser.getNo());
             }
-
-            String filename = UUID.randomUUID().toString();
-            file.write(this.userPhotoDir + "/" + filename);
-            profilePhoto.setPath(filename);
+            if (file != null) {
+                String filename = UUID.randomUUID().toString();
+                file.write(this.userPhotoDir + "/" + filename);
+                profilePhoto.setPath(filename);
+            }
 
             loginUser.setNickname(nickname);
             loginUser.setPhoneNo(phoneNo);
@@ -188,7 +189,7 @@ public class AuthController {
                 userPhotoDao.update(profilePhoto);
             }
             userPhotoDao.update(profilePhoto);
-            return "redirect:/app/auth/mypage";
+            return "redirect:/app/auth/mypage_form";
         } catch (Exception e) {
             throw new Exception("마이페이지 회원정보 변경 오류");
         }
@@ -198,7 +199,7 @@ public class AuthController {
     public String changePwForm(HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
         if (loginUser == null) {
-            return "/app/auth/login";
+            return "/auth/login_form";
         }
         return "/auth/changepw_form.jsp";
     }
@@ -217,7 +218,7 @@ public class AuthController {
             } else {
                 loginUser.setPassword(newpw1);
                 userDao.updatePassword(loginUser);
-                return "redirect:/app/auth/mypage";
+                return "redirect:/app/auth/mypage_form";
             }
         } catch (Exception e) {
             throw new Exception("비밀번호 변경 오류");

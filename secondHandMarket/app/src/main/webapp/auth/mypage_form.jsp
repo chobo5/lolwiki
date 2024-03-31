@@ -23,7 +23,7 @@
                 <br>
                 <h3>판매 상품</h3>
                 <c:forEach items="${goodsOfUser}" var="goods">
-                    <p><a href="/app/goods/modify?no=${goods.no}">${goods.name}</a></p>
+                    <p><a href="/app/goods/modify_form?no=${goods.no}">${goods.name}</a></p>
                     <c:forEach items="${goods.photoList}" var="photo">
                         <img src="/upload/goods/${photo.path}" width=250 height=250>
                     </c:forEach>
