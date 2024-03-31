@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
 public class GoodsController {
     GoodsDaoImpl goodsDao;
     GoodsPhotoDaoImpl goodsPhotoDao;

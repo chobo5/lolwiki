@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
 public class AuthController {
     private static final Log log = LogFactory.getLog(AuthController.class);
     private TransactionManager txManager;

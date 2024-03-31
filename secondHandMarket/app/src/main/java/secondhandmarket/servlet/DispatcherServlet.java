@@ -16,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -92,6 +93,15 @@ public class DispatcherServlet extends HttpServlet {
 
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
+    }
+
+    private void preparePageControllers() {
+        File classpath = new File("./build/classes/java/main");
+
+    }
+
+    private void findComponents(File dir, String packageName) {
+        File[] files = dir.listFiles()
     }
 
     private void prepareRequestHandlers(List<Object> controllers) {
