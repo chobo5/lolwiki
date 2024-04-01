@@ -27,10 +27,10 @@ public class GoodsController {
     String uploadDir;
     TransactionManager txManager;
 
-    public GoodsController(GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao, String uploadDir, TransactionManager txManager) {
+    public GoodsController(GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao, TransactionManager txManager) {
         this.goodsDao = goodsDao;
         this.goodsPhotoDao = goodsPhotoDao;
-        this.uploadDir = uploadDir;
+        this.uploadDir = System.getProperty("goods.upload.dir");
         this.txManager = txManager;
     }
 

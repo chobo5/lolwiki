@@ -30,14 +30,14 @@ public class AuthController {
     private String userPhotoDir;
 
     public AuthController(TransactionManager txManager, UserDaoImpl userDao, GoodsDaoImpl goodsDao, GoodsPhotoDaoImpl goodsPhotoDao,
-                          UserPhotoDaoImpl userPhotoDao, String goodsPhotoDir, String userPhotoDir) {
+                          UserPhotoDaoImpl userPhotoDao) {
         this.txManager = txManager;
         this.userDao = userDao;
         this.goodsDao = goodsDao;
         this.goodsPhotoDao = goodsPhotoDao;
         this.userPhotoDao = userPhotoDao;
-        this.goodsPhotoDir = goodsPhotoDir;
-        this.userPhotoDir = userPhotoDir;
+        this.goodsPhotoDir = System.getProperty("goods.upload.dir");
+        this.userPhotoDir = System.getProperty("user.upload.dir");
     }
 
     @RequestMapping("/auth/join_form")

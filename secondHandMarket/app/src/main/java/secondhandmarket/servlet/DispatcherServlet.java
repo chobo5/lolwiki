@@ -16,10 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -32,23 +29,23 @@ public class DispatcherServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(DispatcherServlet.class);
     private final List<Object> controllers = new ArrayList<>();
     private final Map<String, RequestHandler> requestHandlerMap = new HashMap<>();
+    private Map<String, Object> beanMap;
 
     @Override
-    public void init() {
+    public void init() throws ServletException {
         log.debug("생성됨");
-        ServletContext context = this.getServletContext();
-        TransactionManager txManager = (TransactionManager) context.getAttribute("txManager");
-        GoodsDaoImpl goodsDao = (GoodsDaoImpl) context.getAttribute("goodsDao");
-        GoodsPhotoDaoImpl goodsPhotoDao = (GoodsPhotoDaoImpl) context.getAttribute("goodsPhotoDao");
-        UserDaoImpl userDao = (UserDaoImpl) context.getAttribute("userDao");
-        UserPhotoDaoImpl userPhotoDao = (UserPhotoDaoImpl) context.getAttribute("userPhotoDao");
-        String goodsUploadDir = context.getRealPath("/upload/goods");
-        String userUploadDir = context.getRealPath("/upload/user");
+        try {
+            ServletContext context = this.getServletContext();
+            System.setProperty("goods.upload.dir", this.getServletContext().getRealPath("/upload/goods"));
+            System.setProperty("user.upload.dir", this.getServletContext().getRealPath("/upload/user"));
 
-        controllers.add(new HomeController());
-        controllers.add(new AuthController(txManager, userDao, goodsDao, goodsPhotoDao, userPhotoDao, goodsUploadDir, userUploadDir));
-        controllers.add(new GoodsController(goodsDao, goodsPhotoDao, goodsUploadDir, txManager));
-        prepareRequestHandlers(controllers);
+            beanMap = (Map<String, Object>) context.getAttribute("beanMap");
+
+            preparePageControllers();
+            prepareRequestHandlers(controllers);
+        } catch (Exception e) {
+            throw new ServletException();
+        }
     }
 
     @Override
@@ -95,13 +92,55 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void preparePageControllers() {
+    private void preparePageControllers() throws Exception {
         File classpath = new File("./build/classes/java/main");
-
+        //System.out.println(classpath.getCanonicalPath());
+        findComponents(classpath, "");
     }
 
-    private void findComponents(File dir, String packageName) {
-        File[] files = dir.listFiles()
+    private void findComponents(File dir, String packageName) throws Exception {
+        File[] files = dir.listFiles(file ->
+                file.isDirectory() || (file.isFile()
+                        && !file.getName().contains("$")
+                        && file.getName().endsWith(".class")));
+
+        if (packageName.length() > 0) {
+            packageName += ".";
+        }
+        for (File file : files) {
+            if (file.isFile()) {
+                Class<?> clazz = Class.forName(packageName + file.getName().replace(".class", ""));
+                Component compAnno = clazz.getAnnotation(Component.class);
+                if (compAnno != null) {
+                    Constructor<?> constructor = clazz.getConstructors()[0];
+                    Parameter[] params = constructor.getParameters();
+                    Object[] args = getArguments(params);
+                    controllers.add(constructor.newInstance(args));
+                    System.out.println(clazz.getName() + " 객체 생성!");
+                }
+            } else {
+                findComponents(file, packageName + file.getName());
+            }
+        }
+    }
+
+    private Object[] getArguments(Parameter[] params) {
+        Object[] args = new Object[params.length];
+        for (int i = 0; i < params.length; i++) {
+            args[i] = findBean(params[i].getType());
+        }
+        return args;
+    }
+
+    private Object findBean(Class<?> type) {
+        Collection<Object> objs = beanMap.values();
+        for (Object obj : objs) {
+            if (type.isInstance(obj)) {
+                //System.out.printf("%s ==> %s\n", type.getName(), obj.getClass().getName());
+                return obj;
+            }
+        }
+        return null;
     }
 
     private void prepareRequestHandlers(List<Object> controllers) {
@@ -267,5 +306,4 @@ public class DispatcherServlet extends HttpServlet {
         }
         return null;
     }
-
 }
