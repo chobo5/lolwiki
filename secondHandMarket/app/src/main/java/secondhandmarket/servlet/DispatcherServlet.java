@@ -2,6 +2,7 @@ package secondhandmarket.servlet;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import secondhandmarket.context.ApplicationContext;
 import secondhandmarket.controller.*;
 import secondhandmarket.dao.GoodsDaoImpl;
 import secondhandmarket.dao.GoodsPhotoDaoImpl;
@@ -27,22 +28,20 @@ import java.util.*;
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(DispatcherServlet.class);
-    private final List<Object> controllers = new ArrayList<>();
-    private final Map<String, RequestHandler> requestHandlerMap = new HashMap<>();
-    private Map<String, Object> beanMap;
+    private Map<String, RequestHandler> requestHandlerMap = new HashMap<>();
+    private ApplicationContext applicationContext;
 
     @Override
     public void init() throws ServletException {
         log.debug("생성됨");
         try {
-            ServletContext context = this.getServletContext();
             System.setProperty("goods.upload.dir", this.getServletContext().getRealPath("/upload/goods"));
             System.setProperty("user.upload.dir", this.getServletContext().getRealPath("/upload/user"));
 
-            beanMap = (Map<String, Object>) context.getAttribute("beanMap");
+            applicationContext = new ApplicationContext((ApplicationContext) this.getServletContext().getAttribute("applicationContext"),
+                    "secondhandmarket.controller");
 
-            preparePageControllers();
-            prepareRequestHandlers(controllers);
+            prepareRequestHandlers(applicationContext.getBeans());
         } catch (Exception e) {
             throw new ServletException();
         }
@@ -91,59 +90,59 @@ public class DispatcherServlet extends HttpServlet {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
+// ApplicationContext에서 PageController를 생성, 관리
+//    private void preparePageControllers() throws Exception {
+//        File classpath = new File("./build/classes/java/main");
+//        //System.out.println(classpath.getCanonicalPath());
+//        findComponents(classpath, "");
+//    }
 
-    private void preparePageControllers() throws Exception {
-        File classpath = new File("./build/classes/java/main");
-        //System.out.println(classpath.getCanonicalPath());
-        findComponents(classpath, "");
-    }
+//    private void findComponents(File dir, String packageName) throws Exception {
+//        File[] files = dir.listFiles(file ->
+//                file.isDirectory() || (file.isFile()
+//                        && !file.getName().contains("$")
+//                        && file.getName().endsWith(".class")));
+//
+//        if (packageName.length() > 0) {
+//            packageName += ".";
+//        }
+//        for (File file : files) {
+//            if (file.isFile()) {
+//                Class<?> clazz = Class.forName(packageName + file.getName().replace(".class", ""));
+//                Component compAnno = clazz.getAnnotation(Component.class);
+//                if (compAnno != null) {
+//                    Constructor<?> constructor = clazz.getConstructors()[0];
+//                    Parameter[] params = constructor.getParameters();
+//                    Object[] args = getArguments(params);
+//                    controllers.add(constructor.newInstance(args));
+//                    System.out.println(clazz.getName() + " 객체 생성!");
+//                }
+//            } else {
+//                findComponents(file, packageName + file.getName());
+//            }
+//        }
+//    }
 
-    private void findComponents(File dir, String packageName) throws Exception {
-        File[] files = dir.listFiles(file ->
-                file.isDirectory() || (file.isFile()
-                        && !file.getName().contains("$")
-                        && file.getName().endsWith(".class")));
+//    private Object[] getArguments(Parameter[] params) {
+//        Object[] args = new Object[params.length];
+//        for (int i = 0; i < params.length; i++) {
+//            args[i] = findBean(params[i].getType());
+//        }
+//        return args;
+//    }
 
-        if (packageName.length() > 0) {
-            packageName += ".";
-        }
-        for (File file : files) {
-            if (file.isFile()) {
-                Class<?> clazz = Class.forName(packageName + file.getName().replace(".class", ""));
-                Component compAnno = clazz.getAnnotation(Component.class);
-                if (compAnno != null) {
-                    Constructor<?> constructor = clazz.getConstructors()[0];
-                    Parameter[] params = constructor.getParameters();
-                    Object[] args = getArguments(params);
-                    controllers.add(constructor.newInstance(args));
-                    System.out.println(clazz.getName() + " 객체 생성!");
-                }
-            } else {
-                findComponents(file, packageName + file.getName());
-            }
-        }
-    }
+//    private Object findBean(Class<?> type) {
+//        Collection<Object> objs = beanMap.values();
+//        for (Object obj : objs) {
+//            if (type.isInstance(obj)) {
+//                //System.out.printf("%s ==> %s\n", type.getName(), obj.getClass().getName());
+//                return obj;
+//            }
+//        }
+//        return null;
+//    }
 
-    private Object[] getArguments(Parameter[] params) {
-        Object[] args = new Object[params.length];
-        for (int i = 0; i < params.length; i++) {
-            args[i] = findBean(params[i].getType());
-        }
-        return args;
-    }
-
-    private Object findBean(Class<?> type) {
-        Collection<Object> objs = beanMap.values();
-        for (Object obj : objs) {
-            if (type.isInstance(obj)) {
-                //System.out.printf("%s ==> %s\n", type.getName(), obj.getClass().getName());
-                return obj;
-            }
-        }
-        return null;
-    }
-
-    private void prepareRequestHandlers(List<Object> controllers) {
+    private void prepareRequestHandlers(Collection<Object> controllers) {
         for (Object controller : controllers) {
             Method[] methods = controller.getClass().getDeclaredMethods();
             for (Method m : methods) {
