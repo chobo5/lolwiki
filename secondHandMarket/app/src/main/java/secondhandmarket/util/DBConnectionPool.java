@@ -2,6 +2,7 @@ package secondhandmarket.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DBConnectionPool implements ConnectionPool {
@@ -18,9 +19,18 @@ public class DBConnectionPool implements ConnectionPool {
     this.jdbcUrl = jdbcUrl;
     this.username = username;
     this.password = password;
+
+    //초기 connection 10개 생성
+    for (int i = 0; i < 10; i++) {
+      try {
+        connections.add(new ConnectionProxy(DriverManager.getConnection(jdbcUrl, username, password), this));
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
-  public Connection getConnection() throws Exception {
+  public synchronized Connection getConnection() throws Exception {
     // 현재 스레드에 보관중인 Connection 객체를 꺼낸다.
     Connection con = connectionThreadLocal.get();
 
@@ -49,7 +59,7 @@ public class DBConnectionPool implements ConnectionPool {
     return con;
   }
 
-  public void returnConnection(Connection con) {
+  public synchronized void returnConnection(Connection con) {
     // 스레드에 보관중인 Connection 객체를 제거한다.
     connectionThreadLocal.remove();
 
@@ -59,7 +69,7 @@ public class DBConnectionPool implements ConnectionPool {
     System.out.printf("%s: DB 커넥션을 커넥션풀에 반환\n", Thread.currentThread().getName());
   }
 
-  public void closeAll() {
+  public synchronized void closeAll() {
     for (Connection con : connections) {
       ((ConnectionProxy) con).realClose();
     }
